@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/Game.dir/src/main.cpp.o  -o Game 

@@ -1,1 +1,0 @@
-/usr/bin/c++    -rdynamic CMakeFiles/game.dir/src/main.cpp.o  -o game -lGLEW lib/glfw/src/libglfw3.a -lGL -lGLU -lGLEW -lGL -lGLU -lrt -lm -ldl -lX11 -lpthread 
