@@ -6,7 +6,101 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-void error_callback(int error, const char* description) {
+#define MAX_RECT_COUNT 1024
+
+struct Rect {
+    float x_min;
+    float x_max;
+    float y_min;
+    float y_max;
+};
+
+struct RenderBuffer {
+    Rect rects[MAX_RECT_COUNT];
+    int rect_count;
+    GLuint vao;
+    GLuint vbo;
+    GLuint ebo;
+};
+
+struct RenderInfo {
+    int viewport_width;
+    int viewport_height;
+
+    GLuint shader_program;
+    RenderBuffer render_buffer;
+    glm::mat4 projection;
+};
+
+static void clear_buffer(RenderBuffer* render_buffer) {
+    render_buffer->rect_count = 0;
+}
+
+static void push_rect(RenderBuffer* render_buffer, int x_min, int x_max, int y_min, int y_max) {
+    Rect rect = {};
+    rect.x_min = x_min;
+    rect.x_max = x_max;
+    rect.y_min = y_min;
+    rect.y_max = y_max;
+
+    render_buffer->rects[render_buffer->rect_count] = rect;
+    render_buffer->rect_count++;
+}
+
+static void draw(RenderInfo* render_info) {
+    glBindVertexArray(render_info->render_buffer.vao);
+
+    float vertices[MAX_RECT_COUNT * 8] = {};
+    GLuint elements[MAX_RECT_COUNT * 6] = {};
+
+    for (int i = 0; i < render_info->render_buffer.rect_count; i++) {
+        int vert_index = i * 8;
+        vertices[vert_index] = (float) render_info->render_buffer.rects[i].x_min;
+        vertices[vert_index + 1] = (float) render_info->render_buffer.rects[i].y_min;
+
+        vertices[vert_index + 2] = (float) render_info->render_buffer.rects[i].x_max;
+        vertices[vert_index + 3] = (float) render_info->render_buffer.rects[i].y_min;
+
+        vertices[vert_index + 4] = (float) render_info->render_buffer.rects[i].x_min;
+        vertices[vert_index + 5] = (float) render_info->render_buffer.rects[i].y_max;
+
+        vertices[vert_index + 6] = (float) render_info->render_buffer.rects[i].x_max;
+        vertices[vert_index + 7] = (float) render_info->render_buffer.rects[i].y_max;
+
+        int elem_index = i * 6;
+        int elem = i * 4;
+        elements[elem_index] = elem;
+        elements[elem_index + 1] = elem + 1;
+        elements[elem_index + 2] = elem + 2;
+        elements[elem_index + 3] = elem + 1;
+        elements[elem_index + 4] = elem + 2;
+        elements[elem_index + 5] = elem + 3;
+    }
+
+    // printf("\nverts: ");
+    // for (int i = 0; i < render_info->render_buffer.rect_count * 8; i++) {
+    //     printf("%f, ", vertices[i]);
+    // }
+
+    // printf("\nelems: ");
+    // for (int i = 0; i < render_info->render_buffer.rect_count * 6; i++) {
+    //     printf("%d, ", elements[i]);
+    // }
+
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_DYNAMIC_DRAW);
+
+    glDrawElements(
+        GL_TRIANGLES,
+        render_info->render_buffer.rect_count * 6,
+        GL_UNSIGNED_INT,
+        0
+    );
+
+    glBindVertexArray(0);
+}
+
+static void error_callback(int error, const char* description) {
     printf("an error has occured: %s\n", description);
 }
 
@@ -98,9 +192,15 @@ int main(int argc, char *argv[]) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
+    RenderInfo* render_info = new RenderInfo;
+
+    glfwGetFramebufferSize(
+        window,
+        &render_info->viewport_width,
+        &render_info->viewport_height
+    );
+
+    glViewport(0, 0, render_info->viewport_width, render_info->viewport_height);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // setup done at this point
@@ -115,9 +215,9 @@ int main(int argc, char *argv[]) {
     glShaderSource(fragment_shader, 1, &fragment_source, NULL);
     glCompileShader(fragment_shader);
 
-    GLuint shader_program = glCreateProgram();
-    glAttachShader(shader_program, vertex_shader);
-    glAttachShader(shader_program, fragment_shader);
+    render_info->shader_program = glCreateProgram();
+    glAttachShader(render_info->shader_program, vertex_shader);
+    glAttachShader(render_info->shader_program, fragment_shader);
 
     GLint vertex_status;
     glGetShaderiv(vertex_shader, GL_COMPILE_STATUS, &vertex_status);
@@ -127,44 +227,30 @@ int main(int argc, char *argv[]) {
     glGetShaderiv(fragment_shader, GL_COMPILE_STATUS, &fragment_status);
     printf("fragment compiled: %d\n", fragment_status == GL_TRUE);
 
-    glLinkProgram(shader_program);
+    glLinkProgram(render_info->shader_program);
 
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    render_info->render_buffer.vao;
+    glGenVertexArrays(1, &render_info->render_buffer.vao);
+    glBindVertexArray(render_info->render_buffer.vao);
 
-    float vertices[] = {
-        10.0f, 10.0f, // top left
-        100.0f, 10.0f, // top right
-        10.0f, 100.0f, // bottom left
-        100.0f, 100.0f, // bottom right
-    };
+    for (int i = 0; i < 10; i++) {
+        push_rect(&render_info->render_buffer, i * 60, (i * 60) + 50, 10, 50);
+    }
 
-    GLuint elements[] = {
-        0, 1, 2,
-        1, 2, 3,
-        4, 5, 6,
-        5, 6, 7
-    };
+    glUseProgram(render_info->shader_program);
 
-    glUseProgram(shader_program);
+    glGenBuffers(1, &render_info->render_buffer.vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, render_info->render_buffer.vbo);
 
-    GLuint vbo;
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glGenBuffers(1, &render_info->render_buffer.ebo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, render_info->render_buffer.ebo);
 
-    GLuint ebo;
-    glGenBuffers(1, &ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
-
-    GLint attrib_pos = glGetAttribLocation(shader_program, "position");
+    GLint attrib_pos = glGetAttribLocation(render_info->shader_program, "position");
     glEnableVertexAttribArray(attrib_pos);
     glVertexAttribPointer(attrib_pos, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
 
-    glm::mat4 proj_matrix = glm::ortho(0.0f, (float) width, (float) height, 0.0f);
-    GLint proj_loc = glGetUniformLocation(shader_program, "projection");
+    glm::mat4 proj_matrix = glm::ortho(0.0f, (float) render_info->viewport_width, (float) render_info->viewport_height, 0.0f);
+    GLint proj_loc = glGetUniformLocation(render_info->shader_program, "projection");
     glUniformMatrix4fv(proj_loc, 1, GL_FALSE, glm::value_ptr(proj_matrix));
 
     get_gl_error();
@@ -174,6 +260,8 @@ int main(int argc, char *argv[]) {
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        draw(render_info);
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
