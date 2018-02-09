@@ -9,25 +9,7 @@
 #include <types.hpp>
 #include <shader.hpp>
 #include <render_group.hpp>
-
-#define MAX_RENDER_GROUP_COUNT 10
-
-struct RenderInfo {
-    i32 viewport_width;
-    i32 viewport_height;
-
-    RenderGroup* render_groups[MAX_RENDER_GROUP_COUNT];
-    u32 render_group_count;
-    glm::mat4 projection;
-};
-
-static void terminate(RenderInfo* render_info) {
-    for (u32 i = 0; i < render_info->render_group_count; i++) {
-        delete render_info->render_groups[i];
-    }
-
-    delete render_info;
-}
+#include <render_info.hpp>
 
 static void push_rect(
     RenderGroup* render_group,
@@ -44,17 +26,11 @@ static void push_rect(
     render_group->rect_count++;
 }
 
-static void draw(RenderInfo* render_info) {
-    for (u32 i = 0; i < render_info->render_group_count; i++) {
-        render_info->render_groups[i]->draw();
-    }
-}
-
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);
 }
 
-static void key_callback(GLFWwindow* window, i32 key, i32 scancode, i32 action, i32 mods) {
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
     printf("key pressed: %d", key);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
@@ -110,27 +86,11 @@ i32 main(i32 argc, char *argv[]) {
     glfwMakeContextCurrent(window);
     glfwSetKeyCallback(window, key_callback);
 
-    const GLubyte* renderer_string = glGetString(GL_RENDERER);
-    const GLubyte* version_string = glGetString(GL_VERSION);
-
-    printf("renderer: %s, opengl version: %s\n", renderer_string, version_string);
-
     glewExperimental = GL_TRUE;
     glewInit();
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    auto render_info = new RenderInfo(window);
 
-    auto render_info = new RenderInfo;
-    render_info->render_group_count = 0;
-
-    glfwGetFramebufferSize(
-        window,
-        &render_info->viewport_width,
-        &render_info->viewport_height
-    );
-
-    glViewport(0, 0, render_info->viewport_width, render_info->viewport_height);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     Shader shader(
@@ -152,7 +112,7 @@ i32 main(i32 argc, char *argv[]) {
 
     render_info->render_groups[0] = render_group;
     render_info->render_group_count++;
-    push_rect(render_group, 50, 200, 10, 500);
+    push_rect(render_group, 50, 200, 50, 200);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -160,12 +120,11 @@ i32 main(i32 argc, char *argv[]) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        draw(render_info);
+        render_info->draw();
 
         glfwSwapBuffers(window);
     }
 
-    terminate(render_info);
     glfwTerminate();
     return 0;
 }

@@ -19,6 +19,7 @@ set(SOURCE_FILES
     src/main.cpp
     src/shader.cpp
     src/render_group.cpp
+    src/render_info.cpp
 )
 
 include_directories(
