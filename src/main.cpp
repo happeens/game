@@ -8,101 +8,46 @@
 
 #include <types.hpp>
 #include <shader.hpp>
+#include <render_group.hpp>
 
-#define MAX_RECT_COUNT 1024
-
-struct Rect {
-    f32 x_min;
-    f32 x_max;
-    f32 y_min;
-    f32 y_max;
-};
-
-struct RenderBuffer {
-    Rect rects[MAX_RECT_COUNT];
-    u32 rect_count;
-    GLuint vao;
-    GLuint vbo;
-    GLuint ebo;
-};
+#define MAX_RENDER_GROUP_COUNT 10
 
 struct RenderInfo {
     i32 viewport_width;
     i32 viewport_height;
 
-    Shader shader;
-    RenderBuffer render_buffer;
+    RenderGroup* render_groups[MAX_RENDER_GROUP_COUNT];
+    u32 render_group_count;
     glm::mat4 projection;
 };
 
-static void clear_buffer(RenderBuffer* render_buffer) {
-    render_buffer->rect_count = 0;
+static void terminate(RenderInfo* render_info) {
+    for (u32 i = 0; i < render_info->render_group_count; i++) {
+        delete render_info->render_groups[i];
+    }
+
+    delete render_info;
 }
 
-static void push_rect(RenderBuffer* render_buffer, i32 x_min, i32 x_max, i32 y_min, i32 y_max) {
+static void push_rect(
+    RenderGroup* render_group,
+    i32 x_min, i32 x_max,
+    i32 y_min, i32 y_max
+) {
     Rect rect = {};
     rect.x_min = x_min;
     rect.x_max = x_max;
     rect.y_min = y_min;
     rect.y_max = y_max;
 
-    render_buffer->rects[render_buffer->rect_count] = rect;
-    render_buffer->rect_count++;
+    render_group->rects[render_group->rect_count] = rect;
+    render_group->rect_count++;
 }
 
 static void draw(RenderInfo* render_info) {
-    glBindVertexArray(render_info->render_buffer.vao);
-
-    auto rect_count = render_info->render_buffer.rect_count;
-    auto rects = &render_info->render_buffer.rects;
-
-    f32 vertices[MAX_RECT_COUNT * 8] = {};
-    GLuint elements[MAX_RECT_COUNT * 6] = {};
-
-    for (u32 i = 0; i < rect_count; i++) {
-        auto vert_index = i * 8;
-        vertices[vert_index] = (f32) rects[i]->x_min;
-        vertices[vert_index + 1] = (f32) rects[i]->y_min;
-
-        vertices[vert_index + 2] = (f32) rects[i]->x_max;
-        vertices[vert_index + 3] = (f32) rects[i]->y_min;
-
-        vertices[vert_index + 4] = (f32) rects[i]->x_min;
-        vertices[vert_index + 5] = (f32) rects[i]->y_max;
-
-        vertices[vert_index + 6] = (f32) rects[i]->x_max;
-        vertices[vert_index + 7] = (f32) rects[i]->y_max;
-
-        auto elem_index = i * 6;
-        auto elem = i * 4;
-        elements[elem_index] = elem;
-        elements[elem_index + 1] = elem + 1;
-        elements[elem_index + 2] = elem + 2;
-        elements[elem_index + 3] = elem + 1;
-        elements[elem_index + 4] = elem + 2;
-        elements[elem_index + 5] = elem + 3;
+    for (u32 i = 0; i < render_info->render_group_count; i++) {
+        render_info->render_groups[i]->draw();
     }
-
-    glBufferSubData(
-        GL_ARRAY_BUFFER,
-        0, rect_count * 8 * sizeof(GLfloat),
-        vertices
-    );
-
-    glBufferSubData(
-        GL_ELEMENT_ARRAY_BUFFER,
-        0, rect_count * 6 * sizeof(GLuint),
-        elements
-    );
-
-    glDrawElements(
-        GL_TRIANGLES,
-        rect_count * 6,
-        GL_UNSIGNED_INT,
-        0
-    );
-
-    glBindVertexArray(0);
 }
 
 static void error_callback(i32 error, const char* description) {
@@ -155,7 +100,7 @@ i32 main(i32 argc, char *argv[]) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    GLFWwindow* window = glfwCreateWindow(640, 480, "game", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1000, 1000, "game", NULL, NULL);
     if (!window) {
         printf("window creation failed\n");
         glfwTerminate();
@@ -176,7 +121,8 @@ i32 main(i32 argc, char *argv[]) {
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
-    RenderInfo* render_info = new RenderInfo;
+    auto render_info = new RenderInfo;
+    render_info->render_group_count = 0;
 
     glfwGetFramebufferSize(
         window,
@@ -187,43 +133,12 @@ i32 main(i32 argc, char *argv[]) {
     glViewport(0, 0, render_info->viewport_width, render_info->viewport_height);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    render_info->shader = load_shader(
+    Shader shader(
         "../src/shaders/default.vs.glsl",
         "../src/shaders/default.fs.glsl"
     );
 
-    use_shader(render_info->shader);
-
-    glGenVertexArrays(1, &render_info->render_buffer.vao);
-    glBindVertexArray(render_info->render_buffer.vao);
-
-    push_rect(&render_info->render_buffer, 50, 200, 10, 500);
-
-    glGenBuffers(1, &render_info->render_buffer.vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, render_info->render_buffer.vbo);
-    glBufferData(
-        GL_ARRAY_BUFFER,
-        MAX_RECT_COUNT * 8 * sizeof(GLfloat),
-        nullptr,
-        GL_DYNAMIC_DRAW
-    );
-
-    glGenBuffers(1, &render_info->render_buffer.ebo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, render_info->render_buffer.ebo);
-    glBufferData(
-        GL_ELEMENT_ARRAY_BUFFER,
-        MAX_RECT_COUNT * 6 * sizeof(GLuint),
-        nullptr,
-        GL_DYNAMIC_DRAW
-    );
-
-    GLint attrib_pos = glGetAttribLocation(render_info->shader.id, "position");
-    glEnableVertexAttribArray(attrib_pos);
-    glVertexAttribPointer(
-        attrib_pos, 2,
-        GL_FLOAT, GL_FALSE,
-        2 * sizeof(GLfloat), 0
-    );
+    shader.use();
 
     glm::mat4 proj = glm::ortho(
         0.0f,
@@ -231,8 +146,13 @@ i32 main(i32 argc, char *argv[]) {
         (f32) render_info->viewport_height,
         0.0f
     );
+    shader.set_uniform("projection", proj);
 
-    set_uniform(render_info->shader, "projection", proj);
+    auto render_group = new RenderGroup;
+
+    render_info->render_groups[0] = render_group;
+    render_info->render_group_count++;
+    push_rect(render_group, 50, 200, 10, 500);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
@@ -245,6 +165,7 @@ i32 main(i32 argc, char *argv[]) {
         glfwSwapBuffers(window);
     }
 
+    terminate(render_info);
     glfwTerminate();
     return 0;
 }

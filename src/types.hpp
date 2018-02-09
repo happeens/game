@@ -1,3 +1,5 @@
+#pragma once
+
 #define i16 short
 #define i32 int
 #define i64 long

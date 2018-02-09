@@ -15,14 +15,10 @@ set(INCLUDE_DIRS
     src
 )
 
-set(HEADER_FILES
-    src/types.hpp
-    src/shader.hpp
-)
-
 set(SOURCE_FILES
-    src/shader.cpp
     src/main.cpp
+    src/shader.cpp
+    src/render_group.cpp
 )
 
 include_directories(
@@ -33,7 +29,6 @@ include_directories(
 )
 
 add_executable(game
-    ${HEADER_FILES}
     ${SOURCE_FILES}
 )
 
