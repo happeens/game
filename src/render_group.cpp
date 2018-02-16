@@ -1,7 +1,10 @@
 #include <render_group.hpp>
 
-RenderGroup::RenderGroup() {
+RenderGroup::RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection) {
     this->rect_count = 0;
+
+    this->shader = shader;
+    this->projection = projection;
 
     glGenVertexArrays(1, &this->vao);
     glBindVertexArray(this->vao);

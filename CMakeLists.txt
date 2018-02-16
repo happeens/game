@@ -20,6 +20,7 @@ set(SOURCE_FILES
     src/shader.cpp
     src/render_group.cpp
     src/render_info.cpp
+    src/resource_manager.cpp
 )
 
 include_directories(

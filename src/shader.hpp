@@ -12,11 +12,10 @@
 
 #include <types.hpp>
 
-class Shader {
-public:
+struct Shader {
     GLuint id;
 
-    Shader(const char* vertex_path, const char* fragment_path);
+    Shader(const std::string& vertex_path, const std::string& fragment_path);
     ~Shader();
 
     void use() const;

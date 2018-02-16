@@ -4,8 +4,6 @@ RenderInfo::RenderInfo(GLFWwindow* window) {
     this->renderer_string = glGetString(GL_RENDERER);
     this->version_string = glGetString(GL_VERSION);
 
-    // printf("renderer: %s, opengl version: %s\n", renderer_string, version_string);
-
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
@@ -33,4 +31,7 @@ void RenderInfo::draw() const {
 void RenderInfo::push_render_group(RenderGroup* render_group) {
     this->render_groups[this->render_group_count] = render_group;
     this->render_group_count++;
+}
+
+RenderGroup* create_primitive_render_group() {
 }

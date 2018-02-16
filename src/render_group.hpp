@@ -1,8 +1,11 @@
 #pragma once
 
 #include <stdio.h>
+#include <memory>
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/glm.hpp>
 
 #include <shader.hpp>
 #include <types.hpp>
@@ -18,15 +21,18 @@ struct Rect {
     f32 y_max;
 };
 
-class RenderGroup {
-public:
+struct RenderGroup {
     Rect rects[MAX_RECT_COUNT];
     u32 rect_count;
+
     GLuint vao;
     GLuint vbo;
     GLuint ebo;
 
-    RenderGroup();
+    std::shared_ptr<Shader> shader;
+    glm::mat4 projection;
+
+    RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection);
     ~RenderGroup();
 
     void draw() const;

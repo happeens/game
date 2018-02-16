@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <memory>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -10,6 +11,7 @@
 #include <shader.hpp>
 #include <render_group.hpp>
 #include <render_info.hpp>
+#include <resource_manager.hpp>
 
 static void push_rect(
     RenderGroup* render_group,
@@ -93,12 +95,8 @@ i32 main(i32 argc, char *argv[]) {
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    Shader shader(
-        "../src/shaders/default.vs.glsl",
-        "../src/shaders/default.fs.glsl"
-    );
-
-    shader.use();
+    auto shader = ResourceManager::get_instance().get_shader("primitive");
+    shader->use();
 
     glm::mat4 proj = glm::ortho(
         0.0f,
@@ -106,9 +104,9 @@ i32 main(i32 argc, char *argv[]) {
         (f32) render_info->viewport_height,
         0.0f
     );
-    shader.set_uniform("projection", proj);
+    shader->set_uniform("projection", proj);
 
-    auto render_group = new RenderGroup;
+    auto render_group = new RenderGroup(shader, proj);
 
     render_info->render_groups[0] = render_group;
     render_info->render_group_count++;

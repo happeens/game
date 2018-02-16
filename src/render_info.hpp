@@ -6,8 +6,7 @@
 
 #define MAX_RENDER_GROUP_COUNT 10
 
-class RenderInfo {
-public:
+struct RenderInfo {
     i32 viewport_width = 0;
     i32 viewport_height = 0;
 
@@ -23,6 +22,9 @@ public:
 
     void draw() const;
 
-    // NOTE(hilmar): consumes the given render group! maybe use a unique pointer?
+    // NOTE: consumes the given render group! maybe use a unique pointer?
     void push_render_group(RenderGroup* render_group);
+
+    // TODO: how to communicate that this is a non owning pointer?
+    RenderGroup* create_primitive_render_group();
 };
