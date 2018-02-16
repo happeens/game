@@ -7,11 +7,11 @@ std::shared_ptr<Shader> ResourceManager::get_shader(const std::string& name) {
 
     path_buf.str("");
     path_buf << "../src/shaders/" << name << ".vs.glsl";
-    std::string vertex_path = path_buf.str();
+    auto vertex_path = path_buf.str();
 
     path_buf.str("");
     path_buf << "../src/shaders/" << name << ".fs.glsl";
-    std::string fragment_path = path_buf.str();
+    auto fragment_path = path_buf.str();
 
     auto shader = std::make_shared<Shader>(vertex_path, fragment_path);
     this->shaders[name] = shader;

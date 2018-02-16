@@ -22,12 +22,14 @@ struct Rect {
 };
 
 struct RenderGroup {
+    // TODO: this storage should be transient and
+    // filled from game state every frame
     Rect rects[MAX_RECT_COUNT];
-    u32 rect_count;
+    u32 rect_count = 0;
 
-    GLuint vao;
-    GLuint vbo;
-    GLuint ebo;
+    GLuint vao = 0;
+    GLuint vbo = 0;
+    GLuint ebo = 0;
 
     std::shared_ptr<Shader> shader;
     glm::mat4 projection;
@@ -36,5 +38,6 @@ struct RenderGroup {
     ~RenderGroup();
 
     void draw() const;
+    void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);
 };
 

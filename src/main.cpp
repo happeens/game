@@ -3,30 +3,10 @@
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-#include <types.hpp>
-#include <shader.hpp>
-#include <render_group.hpp>
 #include <render_info.hpp>
 #include <resource_manager.hpp>
-
-static void push_rect(
-    RenderGroup* render_group,
-    i32 x_min, i32 x_max,
-    i32 y_min, i32 y_max
-) {
-    Rect rect = {};
-    rect.x_min = x_min;
-    rect.x_max = x_max;
-    rect.y_min = y_min;
-    rect.y_max = y_max;
-
-    render_group->rects[render_group->rect_count] = rect;
-    render_group->rect_count++;
-}
+#include <types.hpp>
 
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);
@@ -78,7 +58,7 @@ i32 main(i32 argc, char *argv[]) {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 
-    GLFWwindow* window = glfwCreateWindow(1000, 1000, "game", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "game", NULL, NULL);
     if (!window) {
         printf("window creation failed\n");
         glfwTerminate();
@@ -91,26 +71,12 @@ i32 main(i32 argc, char *argv[]) {
     glewExperimental = GL_TRUE;
     glewInit();
 
-    auto render_info = new RenderInfo(window);
-
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    auto shader = ResourceManager::get_instance().get_shader("primitive");
-    shader->use();
+    auto render_info = new RenderInfo(window);
+    auto primitive_group = render_info->create_primitive_render_group();
 
-    glm::mat4 proj = glm::ortho(
-        0.0f,
-        (f32) render_info->viewport_width,
-        (f32) render_info->viewport_height,
-        0.0f
-    );
-    shader->set_uniform("projection", proj);
-
-    auto render_group = new RenderGroup(shader, proj);
-
-    render_info->render_groups[0] = render_group;
-    render_info->render_group_count++;
-    push_rect(render_group, 50, 200, 50, 200);
+    primitive_group->push_rect(50, 200, 50, 200);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

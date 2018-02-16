@@ -1,8 +1,6 @@
 #include <render_group.hpp>
 
 RenderGroup::RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection) {
-    this->rect_count = 0;
-
     this->shader = shader;
     this->projection = projection;
 
@@ -37,6 +35,7 @@ RenderGroup::RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection) {
 RenderGroup::~RenderGroup() {}
 
 void RenderGroup::draw() const {
+    this->shader->use();
     glBindVertexArray(this->vao);
 
     auto rect_count = this->rect_count;
@@ -45,6 +44,8 @@ void RenderGroup::draw() const {
     f32 vertices[MAX_RECT_COUNT * 8] = {};
     GLuint elements[MAX_RECT_COUNT * 6] = {};
 
+    // TODO: keep this in a buffer to avoid reallocation every
+    // frame?
     for (u32 i = 0; i < rect_count; i++) {
         auto vert_index = i * 8;
         vertices[vert_index] = (f32) rects[i]->x_min;
@@ -89,5 +90,16 @@ void RenderGroup::draw() const {
     );
 
     glBindVertexArray(0);
+}
+
+void RenderGroup::push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max) {
+    Rect rect = {};
+    rect.x_min = x_min;
+    rect.x_max = x_max;
+    rect.y_min = y_min;
+    rect.y_max = y_max;
+
+    this->rects[this->rect_count] = rect;
+    this->rect_count++;
 }
 
