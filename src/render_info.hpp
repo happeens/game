@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RENDER_INFO__
+#define __RENDER_INFO__
 
 #include <stdio.h>
 #include <memory>
@@ -33,3 +34,6 @@ struct RenderInfo {
 
     std::shared_ptr<RenderGroup> create_primitive_render_group();
 };
+
+#endif
+

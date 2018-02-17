@@ -13,11 +13,13 @@ find_package(OpenGL REQUIRED)
 
 set(INCLUDE_DIRS
     src
+    lib
 )
 
 set(SOURCE_FILES
     src/main.cpp
     src/shader.cpp
+    src/texture.cpp
     src/render_group.cpp
     src/render_info.cpp
     src/resource_manager.cpp

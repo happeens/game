@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __TYPES__
+#define __TYPES__
 
 #define i8 int8_t
 #define i16 int16_t
@@ -12,4 +13,6 @@
 
 #define f32 float
 #define f64 double
+
+#endif
 

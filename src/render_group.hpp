@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __RENDER_GROUP__
+#define __RENDER_GROUP__
 
 #include <stdio.h>
 #include <memory>
@@ -40,4 +41,6 @@ struct RenderGroup {
     void draw() const;
     void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);
 };
+
+#endif
 

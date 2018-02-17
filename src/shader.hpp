@@ -1,4 +1,5 @@
-#pragma once
+#ifndef __SHADER__
+#define __SHADER__
 
 #include <stdio.h>
 #include <string>
@@ -26,4 +27,5 @@ struct Shader {
     void set_uniform(const std::string& name, glm::mat4 value) const;
 };
 
+#endif
 
