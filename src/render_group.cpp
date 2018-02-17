@@ -28,7 +28,10 @@ RenderGroup::RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection) {
     );
 
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(GLfloat), 0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*) 0);
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat)));
 
     glBindVertexArray(0);
     return;
@@ -44,22 +47,44 @@ void RenderGroup::draw() const {
 
     // TODO: keep this in a buffer to avoid reallocation every
     // frame?
-    f32 vertices[MAX_RECT_COUNT * 8] = {};
+    // NOTE: (2 * 4) verts per rect, (3 * 4) color points per rect
+    f32 vertices[MAX_RECT_COUNT * (8 + 12)] = {};
     GLuint elements[MAX_RECT_COUNT * 6] = {};
 
     for (u32 i = 0; i < this->rect_count; i++) {
         auto vert_index = i * 8;
+
+        // top left
         vertices[vert_index] = (f32) this->rects[i].x_min;
         vertices[vert_index + 1] = (f32) this->rects[i].y_min;
 
-        vertices[vert_index + 2] = (f32) this->rects[i].x_max;
-        vertices[vert_index + 3] = (f32) this->rects[i].y_min;
+        vertices[vert_index + 2] = 1.0;
+        vertices[vert_index + 3] = 1.0;
+        vertices[vert_index + 4] = 0.0;
 
-        vertices[vert_index + 4] = (f32) this->rects[i].x_min;
-        vertices[vert_index + 5] = (f32) this->rects[i].y_max;
+        // top right
+        vertices[vert_index + 5] = (f32) this->rects[i].x_max;
+        vertices[vert_index + 6] = (f32) this->rects[i].y_min;
 
-        vertices[vert_index + 6] = (f32) this->rects[i].x_max;
-        vertices[vert_index + 7] = (f32) this->rects[i].y_max;
+        vertices[vert_index + 7] = 0.0;
+        vertices[vert_index + 8] = 1.0;
+        vertices[vert_index + 9] = 1.0;
+
+        // bottom left
+        vertices[vert_index + 10] = (f32) this->rects[i].x_min;
+        vertices[vert_index + 11] = (f32) this->rects[i].y_max;
+
+        vertices[vert_index + 12] = 1.0;
+        vertices[vert_index + 13] = 0.0;
+        vertices[vert_index + 14] = 0.0;
+
+        // bottom right
+        vertices[vert_index + 15] = (f32) this->rects[i].x_max;
+        vertices[vert_index + 16] = (f32) this->rects[i].y_max;
+
+        vertices[vert_index + 17] = 0.0;
+        vertices[vert_index + 18] = 0.0;
+        vertices[vert_index + 19] = 1.0;
 
         auto elem_index = i * 6;
         auto elem = i * 4;
@@ -73,7 +98,7 @@ void RenderGroup::draw() const {
 
     glBufferSubData(
         GL_ARRAY_BUFFER,
-        0, rect_count * 8 * sizeof(GLfloat),
+        0, rect_count * (8 + 12) * sizeof(GLfloat),
         vertices
     );
 

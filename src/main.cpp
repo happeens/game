@@ -4,8 +4,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <common.hpp>
 #include <render_info.hpp>
-#include <types.hpp>
 
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);
@@ -75,7 +75,7 @@ i32 main(i32 argc, char *argv[]) {
     auto render_info = new RenderInfo(window);
     auto primitive_group = render_info->create_primitive_render_group();
 
-    primitive_group->push_rect(50, 200, 50, 200);
+    primitive_group->push_rect(50, 800, 50, 400);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

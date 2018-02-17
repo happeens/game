@@ -6,7 +6,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <types.hpp>
+#include <common.hpp>
 #include <resource_manager.hpp>
 #include <render_group.hpp>
 

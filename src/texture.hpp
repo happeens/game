@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-#include <types.hpp>
+#include <common.hpp>
 
 struct Texture {
     GLuint id;

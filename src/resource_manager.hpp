@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 
-#include <types.hpp>
+#include <common.hpp>
 #include <texture.hpp>
 #include <shader.hpp>
 
@@ -19,6 +19,7 @@ public:
     void operator =(ResourceManager const&) = delete;
 
     std::shared_ptr<Shader> get_shader(const std::string& name);
+    std::shared_ptr<Texture> get_texture(const std::string& name);
 
 private:
     ResourceManager() {}

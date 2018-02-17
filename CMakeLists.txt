@@ -13,6 +13,7 @@ find_package(OpenGL REQUIRED)
 
 set(INCLUDE_DIRS
     src
+    src/common
     lib
 )
 
