@@ -1,5 +1,8 @@
 #include <resource_manager.hpp>
 
+#include <stdio.h>
+#include <sstream>
+
 std::shared_ptr<Shader> ResourceManager::get_shader(const std::string& name) {
     if (this->shaders.count(name) > 0) return this->shaders[name];
 

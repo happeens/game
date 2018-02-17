@@ -1,5 +1,7 @@
 #include <render_group.hpp>
 
+#include <stdio.h>
+
 RenderGroup::RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection) {
     this->shader = shader;
     this->projection = projection;

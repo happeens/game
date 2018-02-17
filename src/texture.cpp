@@ -1,5 +1,10 @@
 #include <texture.hpp>
 
+#include <stdio.h>
+
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb/stb_image.h>
+
 Texture::Texture(const std::string& path) {
     unsigned char* data = stbi_load(
         path.c_str(),

@@ -1,4 +1,11 @@
-#include <main.hpp>
+#include <stdio.h>
+#include <memory>
+
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+
+#include <render_info.hpp>
+#include <types.hpp>
 
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);

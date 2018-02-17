@@ -1,15 +1,13 @@
-#ifndef __RENDER_GROUP__
-#define __RENDER_GROUP__
+#pragma once
 
-#include <stdio.h>
 #include <memory>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 
-#include <shader.hpp>
 #include <types.hpp>
+#include <shader.hpp>
 
 #define MAX_RECT_COUNT 1024
 #define VBO_RECT_ELEMS 8
@@ -41,6 +39,4 @@ struct RenderGroup {
     void draw() const;
     void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);
 };
-
-#endif
 

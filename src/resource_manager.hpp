@@ -1,15 +1,12 @@
-#ifndef __RESOURCE_MANAGER__
-#define __RESOURCE_MANAGER__
+#pragma once
 
-#include <stdio.h>
 #include <unordered_map>
 #include <memory>
 #include <string>
-#include <sstream>
 
-// #include <texture.hpp>
-#include <shader.hpp>
 #include <types.hpp>
+#include <texture.hpp>
+#include <shader.hpp>
 
 class ResourceManager {
 public:
@@ -27,8 +24,6 @@ private:
     ResourceManager() {}
 
     std::unordered_map<std::string, std::shared_ptr<Shader>> shaders = {};
-    // std::unordered_map<std::string, std::shared_ptr<Texture>> textures = {};
+    std::unordered_map<std::string, std::shared_ptr<Texture>> textures = {};
 };
-
-#endif
 

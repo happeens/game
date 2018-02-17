@@ -1,5 +1,10 @@
 #include <render_info.hpp>
 
+#include <stdio.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+
 RenderInfo::RenderInfo(GLFWwindow* window) {
     this->renderer_string = glGetString(GL_RENDERER);
     this->version_string = glGetString(GL_VERSION);

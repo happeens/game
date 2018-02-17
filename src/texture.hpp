@@ -1,14 +1,9 @@
-#ifndef __TEXTURE__
-#define __TEXTURE__
+#pragma once
 
-#include <stdio.h>
 #include <string>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb/stb_image.h>
 
 #include <types.hpp>
 
@@ -24,6 +19,4 @@ struct Texture {
 
     void bind() const;
 };
-
-#endif
 
