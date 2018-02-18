@@ -7,7 +7,6 @@
 #include <glm/glm.hpp>
 
 #include <common.hpp>
-#include <resource_manager.hpp>
 #include <render_group.hpp>
 
 #define MAX_RENDER_GROUP_COUNT 10

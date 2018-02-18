@@ -26,9 +26,15 @@ Texture::Texture(const std::string& path) {
     );
 
     stbi_image_free(data);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 Texture::~Texture() {
     glDeleteTextures(1, &this->id);
+}
+
+void Texture::bind() const {
+    glBindTexture(GL_TEXTURE_2D, this->id);
 }
 

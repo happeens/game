@@ -8,6 +8,7 @@
 
 #include <common.hpp>
 #include <shader.hpp>
+#include <texture.hpp>
 
 #define MAX_RECT_COUNT 1024
 #define VBO_RECT_ELEMS 8
@@ -20,6 +21,11 @@ struct Rect {
     f32 y_max;
 };
 
+enum struct RenderGroupType {
+    Primitive = 0,
+    Sprite
+};
+
 struct RenderGroup {
     // TODO: this storage should be transient and
     // filled from game state every frame
@@ -30,11 +36,17 @@ struct RenderGroup {
     GLuint vbo = 0;
     GLuint ebo = 0;
 
+    RenderGroupType type;
+
     std::shared_ptr<Shader> shader;
+    std::shared_ptr<Texture> texture = nullptr;
     glm::mat4 projection;
 
-    RenderGroup(std::shared_ptr<Shader> shader, glm::mat4 projection);
+    RenderGroup();
     ~RenderGroup();
+
+    static std::shared_ptr<RenderGroup> primitive(glm::mat4 projection);
+    static std::shared_ptr<RenderGroup> sprite(glm::mat4 projection);
 
     void draw() const;
     void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);
