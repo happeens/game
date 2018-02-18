@@ -62,6 +62,8 @@ struct RenderGroup {
     );
 
     void draw() const;
-    void push_rect(Rect rect);
+
+    void push_rect(ColoredRect rect);
+    void push_rect(TexturedRect rect);
 };
 

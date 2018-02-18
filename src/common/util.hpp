@@ -5,12 +5,7 @@
 #define ASSERT(condition) \
 {\
     if (!(condition)) {\
-        printf(\
-            "assertion failed at %s:%s in %s",\
-            __FILE__,\
-            __LINE__,\
-            __func__\
-        );\
+        printf("assertion failed at %s:%d\n", __FILE__, __LINE__);\
         abort();\
     }\
 }

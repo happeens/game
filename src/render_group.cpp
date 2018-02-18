@@ -248,7 +248,16 @@ void RenderGroup::draw() const {
     glBindVertexArray(0);
 }
 
-void RenderGroup::push_rect(Rect rect) {
+void RenderGroup::push_rect(ColoredRect rect) {
+    ASSERT(this->type == RenderGroupType::Primitive);
+
+    this->rects[this->rect_count] = rect;
+    this->rect_count++;
+}
+
+void RenderGroup::push_rect(TexturedRect rect) {
+    ASSERT(this->type == RenderGroupType::Sprite);
+
     this->rects[this->rect_count] = rect;
     this->rect_count++;
 }
