@@ -83,7 +83,12 @@ i32 main(i32 argc, char *argv[]) {
     // primitive_group->push_rect(50, 800, 50, 400);
 
     auto sprite_group = render_info->create_sprite_render_group();
-    sprite_group->push_rect(50, 400, 50, 400);
+    TexturedRect rect;
+    rect.x_min = 50;
+    rect.x_max = 400;
+    rect.y_min = 50;
+    rect.y_max = 400;
+    sprite_group->push_rect(rect);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

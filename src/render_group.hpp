@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <variant>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -14,12 +15,21 @@
 #define VBO_RECT_ELEMS 8
 #define EBO_RECT_ELEMS 6
 
-struct Rect {
+struct ColoredRect {
     f32 x_min;
     f32 x_max;
     f32 y_min;
     f32 y_max;
 };
+
+struct TexturedRect {
+    f32 x_min;
+    f32 x_max;
+    f32 y_min;
+    f32 y_max;
+};
+
+using Rect = std::variant<ColoredRect, TexturedRect>;
 
 enum struct RenderGroupType {
     Primitive = 0,
@@ -52,6 +62,6 @@ struct RenderGroup {
     );
 
     void draw() const;
-    void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);
+    void push_rect(Rect rect);
 };
 

@@ -37,6 +37,11 @@ add_executable(game
     ${SOURCE_FILES}
 )
 
+set_target_properties(game PROPERTIES
+    CXX_STANDARD_REQUIRED 17
+    CXX_STANDARD 17
+)
+
 target_link_libraries(game
     ${GLEW_LIBRARIES}
     ${OPENGL_LIBRARY}

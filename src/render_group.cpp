@@ -108,35 +108,36 @@ static void draw_primitive_group(const RenderGroup* group) {
     GLuint elements[MAX_RECT_COUNT * 6] = {};
 
     for (u32 i = 0; i < group->rect_count; i++) {
+        auto rect = std::get<ColoredRect>(group->rects[i]);
         auto vert_index = i * 8;
 
         // top left
-        vertices[vert_index] = (f32) group->rects[i].x_min;
-        vertices[vert_index + 1] = (f32) group->rects[i].y_min;
+        vertices[vert_index] = (f32) rect.x_min;
+        vertices[vert_index + 1] = (f32) rect.y_min;
 
         vertices[vert_index + 2] = 1.0;
         vertices[vert_index + 3] = 1.0;
         vertices[vert_index + 4] = 0.0;
 
         // top right
-        vertices[vert_index + 5] = (f32) group->rects[i].x_max;
-        vertices[vert_index + 6] = (f32) group->rects[i].y_min;
+        vertices[vert_index + 5] = (f32) rect.x_max;
+        vertices[vert_index + 6] = (f32) rect.y_min;
 
         vertices[vert_index + 7] = 0.0;
         vertices[vert_index + 8] = 1.0;
         vertices[vert_index + 9] = 1.0;
 
         // bottom left
-        vertices[vert_index + 10] = (f32) group->rects[i].x_min;
-        vertices[vert_index + 11] = (f32) group->rects[i].y_max;
+        vertices[vert_index + 10] = (f32) rect.x_min;
+        vertices[vert_index + 11] = (f32) rect.y_max;
 
         vertices[vert_index + 12] = 1.0;
         vertices[vert_index + 13] = 0.0;
         vertices[vert_index + 14] = 1.0;
 
         // bottom right
-        vertices[vert_index + 15] = (f32) group->rects[i].x_max;
-        vertices[vert_index + 16] = (f32) group->rects[i].y_max;
+        vertices[vert_index + 15] = (f32) rect.x_max;
+        vertices[vert_index + 16] = (f32) rect.y_max;
 
         vertices[vert_index + 17] = 0.0;
         vertices[vert_index + 18] = 0.0;
@@ -180,23 +181,24 @@ static void draw_sprite_group(const RenderGroup* group) {
     group->texture->bind();
 
     for (u32 i = 0; i < group->rect_count; i++) {
+        auto rect = std::get<TexturedRect>(group->rects[i]);
         auto vert_index = i * 8;
 
         // top left
-        vertices[vert_index] = (f32) group->rects[i].x_min;
-        vertices[vert_index + 1] = (f32) group->rects[i].y_min;
+        vertices[vert_index] = (f32) rect.x_min;
+        vertices[vert_index + 1] = (f32) rect.y_min;
 
         // top right
-        vertices[vert_index + 2] = (f32) group->rects[i].x_max;
-        vertices[vert_index + 3] = (f32) group->rects[i].y_min;
+        vertices[vert_index + 2] = (f32) rect.x_max;
+        vertices[vert_index + 3] = (f32) rect.y_min;
 
         // bottom left
-        vertices[vert_index + 4] = (f32) group->rects[i].x_min;
-        vertices[vert_index + 5] = (f32) group->rects[i].y_max;
+        vertices[vert_index + 4] = (f32) rect.x_min;
+        vertices[vert_index + 5] = (f32) rect.y_max;
 
         // bottom right
-        vertices[vert_index + 6] = (f32) group->rects[i].x_max;
-        vertices[vert_index + 7] = (f32) group->rects[i].y_max;
+        vertices[vert_index + 6] = (f32) rect.x_max;
+        vertices[vert_index + 7] = (f32) rect.y_max;
 
         auto elem_index = i * 6;
         auto elem = i * 4;
@@ -246,13 +248,7 @@ void RenderGroup::draw() const {
     glBindVertexArray(0);
 }
 
-void RenderGroup::push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max) {
-    Rect rect = {};
-    rect.x_min = x_min;
-    rect.x_max = x_max;
-    rect.y_min = y_min;
-    rect.y_max = y_max;
-
+void RenderGroup::push_rect(Rect rect) {
     this->rects[this->rect_count] = rect;
     this->rect_count++;
 }
