@@ -46,7 +46,10 @@ struct RenderGroup {
     ~RenderGroup();
 
     static std::shared_ptr<RenderGroup> primitive(glm::mat4 projection);
-    static std::shared_ptr<RenderGroup> sprite(glm::mat4 projection);
+    static std::shared_ptr<RenderGroup> sprite(
+        glm::mat4 projection,
+        std::shared_ptr<Texture> texture
+    );
 
     void draw() const;
     void push_rect(i32 x_min, i32 x_max, i32 y_min, i32 y_max);

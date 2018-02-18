@@ -73,9 +73,12 @@ i32 main(i32 argc, char *argv[]) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     auto render_info = new RenderInfo(window);
-    auto primitive_group = render_info->create_primitive_render_group();
 
-    primitive_group->push_rect(50, 800, 50, 400);
+    // auto primitive_group = render_info->create_primitive_render_group();
+    // primitive_group->push_rect(50, 800, 50, 400);
+
+    auto sprite_group = render_info->create_sprite_render_group();
+    sprite_group->push_rect(50, 400, 50, 400);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

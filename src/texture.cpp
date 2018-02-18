@@ -13,7 +13,7 @@ Texture::Texture(const std::string& path) {
     );
 
     if (!data) {
-        printf("failed to load image %s\n", path);
+        printf("failed to load image %s\n", path.c_str());
         return;
     }
 

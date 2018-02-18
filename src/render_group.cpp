@@ -52,7 +52,10 @@ std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
     return result;
 }
 
-std::shared_ptr<RenderGroup> RenderGroup::sprite(glm::mat4 projection) {
+std::shared_ptr<RenderGroup> RenderGroup::sprite(
+    glm::mat4 projection,
+    std::shared_ptr<Texture> texture
+) {
     auto result = std::make_shared<RenderGroup>();
     result->type = RenderGroupType::Sprite;
 
@@ -62,6 +65,7 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(glm::mat4 projection) {
 
     result->shader = shader;
     result->projection = projection;
+    result->texture = texture;
 
     glGenVertexArrays(1, &result->vao);
     glBindVertexArray(result->vao);

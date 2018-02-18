@@ -28,5 +28,6 @@ struct RenderInfo {
     void draw() const;
 
     std::shared_ptr<RenderGroup> create_primitive_render_group();
+    std::shared_ptr<RenderGroup> create_sprite_render_group();
 };
 
