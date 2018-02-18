@@ -12,8 +12,6 @@
 #include <texture.hpp>
 
 #define MAX_RECT_COUNT 1024
-#define VBO_RECT_ELEMS 8
-#define EBO_RECT_ELEMS 6
 
 struct ColoredRect {
     f32 x_min;

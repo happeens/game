@@ -75,20 +75,38 @@ i32 main(i32 argc, char *argv[]) {
     glewExperimental = GL_TRUE;
     glewInit();
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     auto render_info = new RenderInfo(window);
 
-    // auto primitive_group = render_info->create_primitive_render_group();
-    // primitive_group->push_rect(50, 800, 50, 400);
 
     auto sprite_group = render_info->create_sprite_render_group();
-    TexturedRect rect;
-    rect.x_min = 50;
-    rect.x_max = 400;
-    rect.y_min = 50;
-    rect.y_max = 400;
-    sprite_group->push_rect(rect);
+    auto primitive_group2 = render_info->create_primitive_render_group();
+    auto primitive_group = render_info->create_primitive_render_group();
+
+    TexturedRect rect2;
+    rect2.x_min = 50;
+    rect2.x_max = 400;
+    rect2.y_min = 50;
+    rect2.y_max = 400;
+    sprite_group->push_rect(rect2);
+
+    ColoredRect rect1;
+    rect1.x_min = 450;
+    rect1.x_max = 600;
+    rect1.y_min = 450;
+    rect1.y_max = 600;
+    primitive_group->push_rect(rect1);
+
+    ColoredRect rect3;
+    rect3.x_min = 50;
+    rect3.x_max = 400;
+    rect3.y_min = 50;
+    rect3.y_max = 400;
+    primitive_group->push_rect(rect3);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();

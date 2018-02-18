@@ -22,7 +22,7 @@ std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
     glBindBuffer(GL_ARRAY_BUFFER, result->vbo);
     glBufferData(
         GL_ARRAY_BUFFER,
-        MAX_RECT_COUNT * VBO_RECT_ELEMS * sizeof(GLfloat),
+        MAX_RECT_COUNT * 20 * sizeof(GLfloat),
         nullptr,
         GL_DYNAMIC_DRAW
     );
@@ -31,7 +31,7 @@ std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, result->ebo);
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        MAX_RECT_COUNT * EBO_RECT_ELEMS * sizeof(GLuint),
+        MAX_RECT_COUNT * 6 * sizeof(GLuint),
         nullptr,
         GL_DYNAMIC_DRAW
     );
@@ -74,7 +74,7 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
     glBindBuffer(GL_ARRAY_BUFFER, result->vbo);
     glBufferData(
         GL_ARRAY_BUFFER,
-        MAX_RECT_COUNT * VBO_RECT_ELEMS * sizeof(GLfloat),
+        MAX_RECT_COUNT * 8 * sizeof(GLfloat),
         nullptr,
         GL_DYNAMIC_DRAW
     );
@@ -83,7 +83,7 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, result->ebo);
     glBufferData(
         GL_ELEMENT_ARRAY_BUFFER,
-        MAX_RECT_COUNT * EBO_RECT_ELEMS * sizeof(GLuint),
+        MAX_RECT_COUNT * 6 * sizeof(GLuint),
         nullptr,
         GL_DYNAMIC_DRAW
     );
@@ -109,7 +109,7 @@ static void draw_primitive_group(const RenderGroup* group) {
 
     for (u32 i = 0; i < group->rect_count; i++) {
         auto rect = std::get<ColoredRect>(group->rects[i]);
-        auto vert_index = i * 8;
+        auto vert_index = i * 20;
 
         // top left
         vertices[vert_index] = (f32) rect.x_min;
