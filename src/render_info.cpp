@@ -53,12 +53,10 @@ std::shared_ptr<RenderGroup> RenderInfo::create_sprite_render_group() {
         0.0f
     );
 
-    auto texture = ResourceManager::get_instance().get_texture("wall.jpg");
+    auto texture = ResourceManager::get_instance().get_texture("female0.png");
     texture->bind();
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
     auto render_group = RenderGroup::sprite(proj, texture);
     this->render_groups[this->render_group_count] = render_group;
