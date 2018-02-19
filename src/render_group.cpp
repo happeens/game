@@ -12,6 +12,7 @@ std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
     shader->use();
     shader->set_uniform("projection", projection);
 
+    result->texture = std::nullopt;
     result->shader = shader;
     result->projection = projection;
 
@@ -63,9 +64,9 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
     shader->use();
     shader->set_uniform("projection", projection);
 
+    result->texture = texture;
     result->shader = shader;
     result->projection = projection;
-    result->texture = texture;
 
     glGenVertexArrays(1, &result->vao);
     glBindVertexArray(result->vao);
@@ -99,7 +100,10 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
 }
 
 RenderGroup::RenderGroup() {}
-RenderGroup::~RenderGroup() {}
+
+RenderGroup::~RenderGroup() {
+    glDeleteVertexArrays(1, &this->vao);
+}
 
 static void draw_primitive_group(const RenderGroup* group) {
     // TODO: keep this in a buffer to avoid reallocation every frame?
@@ -153,12 +157,14 @@ static void draw_primitive_group(const RenderGroup* group) {
         elements[elem_index + 5] = elem + 3;
     }
 
+    glBindBuffer(GL_ARRAY_BUFFER, group->vbo);
     glBufferSubData(
         GL_ARRAY_BUFFER,
-        0, group->rect_count * (8 + 12) * sizeof(GLfloat),
+        0, group->rect_count * 20 * sizeof(GLfloat),
         vertices
     );
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, group->ebo);
     glBufferSubData(
         GL_ELEMENT_ARRAY_BUFFER,
         0, group->rect_count * 6 * sizeof(GLuint),
@@ -178,7 +184,7 @@ static void draw_sprite_group(const RenderGroup* group) {
     f32 vertices[MAX_RECT_COUNT * 8] = {};
     GLuint elements[MAX_RECT_COUNT * 6] = {};
 
-    group->texture->bind();
+    (*group->texture)->bind();
 
     for (u32 i = 0; i < group->rect_count; i++) {
         auto rect = std::get<TexturedRect>(group->rects[i]);
@@ -210,12 +216,14 @@ static void draw_sprite_group(const RenderGroup* group) {
         elements[elem_index + 5] = elem + 3;
     }
 
+    glBindBuffer(GL_ARRAY_BUFFER, group->vbo);
     glBufferSubData(
         GL_ARRAY_BUFFER,
         0, group->rect_count * 8 * sizeof(GLfloat),
         vertices
     );
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, group->ebo);
     glBufferSubData(
         GL_ELEMENT_ARRAY_BUFFER,
         0, group->rect_count * 6 * sizeof(GLuint),
@@ -257,6 +265,7 @@ void RenderGroup::push_rect(ColoredRect rect) {
 
 void RenderGroup::push_rect(TexturedRect rect) {
     ASSERT(this->type == RenderGroupType::Sprite);
+    ASSERT((bool) this->texture);
 
     this->rects[this->rect_count] = rect;
     this->rect_count++;

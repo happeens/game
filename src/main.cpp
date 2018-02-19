@@ -82,10 +82,15 @@ i32 main(i32 argc, char *argv[]) {
 
     auto render_info = new RenderInfo(window);
 
-
     auto sprite_group = render_info->create_sprite_render_group();
-    auto primitive_group2 = render_info->create_primitive_render_group();
     auto primitive_group = render_info->create_primitive_render_group();
+
+    ColoredRect rect1;
+    rect1.x_min = 10;
+    rect1.x_max = 100;
+    rect1.y_min = 10;
+    rect1.y_max = 100;
+    primitive_group->push_rect(rect1);
 
     TexturedRect rect2;
     rect2.x_min = 50;
@@ -94,21 +99,20 @@ i32 main(i32 argc, char *argv[]) {
     rect2.y_max = 400;
     sprite_group->push_rect(rect2);
 
-    ColoredRect rect1;
-    rect1.x_min = 450;
-    rect1.x_max = 600;
-    rect1.y_min = 450;
-    rect1.y_max = 600;
-    primitive_group->push_rect(rect1);
-
     ColoredRect rect3;
-    rect3.x_min = 50;
-    rect3.x_max = 400;
+    rect3.x_min = 10;
+    rect3.x_max = 50;
     rect3.y_min = 50;
-    rect3.y_max = 400;
+    rect3.y_max = 90;
     primitive_group->push_rect(rect3);
 
+    f32 last_time = glfwGetTime();
+
     while (!glfwWindowShouldClose(window)) {
+        f32 now = glfwGetTime();
+        f32 elapsed = now - last_time;
+        now = last_time;
+
         glfwPollEvents();
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

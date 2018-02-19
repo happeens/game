@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <variant>
+#include <optional>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -47,7 +48,7 @@ struct RenderGroup {
     RenderGroupType type;
 
     std::shared_ptr<Shader> shader;
-    std::shared_ptr<Texture> texture = nullptr;
+    std::optional<std::shared_ptr<Texture>> texture;
     glm::mat4 projection;
 
     RenderGroup();
