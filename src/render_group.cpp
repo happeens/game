@@ -108,10 +108,13 @@ RenderGroup::~RenderGroup() {
 static void draw_primitive_group(const RenderGroup* group) {
     // TODO: keep this in a buffer to avoid reallocation every frame?
     // NOTE: (2 * 4) verts per rect, (3 * 4) color points per rect
-    f32 vertices[MAX_RECT_COUNT * (8 + 12)] = {};
-    GLuint elements[MAX_RECT_COUNT * 6] = {};
+    std::vector<f32> vertices = {};
+    vertices.reserve(group->rects.size() * 20);
 
-    for (u32 i = 0; i < group->rect_count; i++) {
+    std::vector<GLuint> elements = {};
+    elements.reserve(group->rects.size() * 6);
+
+    for (u32 i = 0; i < group->rects.size(); i++) {
         auto rect = std::get<ColoredRect>(group->rects[i]);
         auto vert_index = i * 20;
 
@@ -160,20 +163,20 @@ static void draw_primitive_group(const RenderGroup* group) {
     glBindBuffer(GL_ARRAY_BUFFER, group->vbo);
     glBufferSubData(
         GL_ARRAY_BUFFER,
-        0, group->rect_count * 20 * sizeof(GLfloat),
-        vertices
+        0, group->rects.size() * 20 * sizeof(GLfloat),
+        vertices.data()
     );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, group->ebo);
     glBufferSubData(
         GL_ELEMENT_ARRAY_BUFFER,
-        0, group->rect_count * 6 * sizeof(GLuint),
-        elements
+        0, group->rects.size() * 6 * sizeof(GLuint),
+        elements.data()
     );
 
     glDrawElements(
         GL_TRIANGLES,
-        group->rect_count * 6,
+        group->rects.size() * 6,
         GL_UNSIGNED_INT,
         0
     );
@@ -181,12 +184,15 @@ static void draw_primitive_group(const RenderGroup* group) {
 
 static void draw_sprite_group(const RenderGroup* group) {
     // TODO: keep this in a buffer to avoid reallocation every frame?
-    f32 vertices[MAX_RECT_COUNT * 8] = {};
-    GLuint elements[MAX_RECT_COUNT * 6] = {};
+    std::vector<f32> vertices = {};
+    vertices.reserve(group->rects.size() * 8);
+
+    std::vector<GLuint> elements = {};
+    elements.reserve(group->rects.size() * 6);
 
     (*group->texture)->bind();
 
-    for (u32 i = 0; i < group->rect_count; i++) {
+    for (u32 i = 0; i < group->rects.size(); i++) {
         auto rect = std::get<TexturedRect>(group->rects[i]);
         auto vert_index = i * 8;
 
@@ -219,20 +225,20 @@ static void draw_sprite_group(const RenderGroup* group) {
     glBindBuffer(GL_ARRAY_BUFFER, group->vbo);
     glBufferSubData(
         GL_ARRAY_BUFFER,
-        0, group->rect_count * 8 * sizeof(GLfloat),
-        vertices
+        0, group->rects.size() * 8 * sizeof(GLfloat),
+        vertices.data()
     );
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, group->ebo);
     glBufferSubData(
         GL_ELEMENT_ARRAY_BUFFER,
-        0, group->rect_count * 6 * sizeof(GLuint),
-        elements
+        0, group->rects.size() * 6 * sizeof(GLuint),
+        elements.data()
     );
 
     glDrawElements(
         GL_TRIANGLES,
-        group->rect_count * 6,
+        group->rects.size() * 6,
         GL_UNSIGNED_INT,
         0
     );
@@ -259,15 +265,13 @@ void RenderGroup::draw() const {
 void RenderGroup::push_rect(ColoredRect rect) {
     ASSERT(this->type == RenderGroupType::Primitive);
 
-    this->rects[this->rect_count] = rect;
-    this->rect_count++;
+    this->rects.push_back(rect);
 }
 
 void RenderGroup::push_rect(TexturedRect rect) {
     ASSERT(this->type == RenderGroupType::Sprite);
     ASSERT((bool) this->texture);
 
-    this->rects[this->rect_count] = rect;
-    this->rect_count++;
+    this->rects.push_back(rect);
 }
 

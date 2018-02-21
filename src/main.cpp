@@ -92,18 +92,18 @@ i32 main(i32 argc, char *argv[]) {
     rect1.y_max = 100;
     primitive_group->push_rect(rect1);
 
-    TexturedRect rect2;
-    rect2.x_min = 50;
-    rect2.x_max = 400;
-    rect2.y_min = 50;
-    rect2.y_max = 400;
-    sprite_group->push_rect(rect2);
+    ColoredRect rect2;
+    rect2.x_min = 100;
+    rect2.x_max = 150;
+    rect2.y_min = 110;
+    rect2.y_max = 160;
+    primitive_group->push_rect(rect2);
 
     ColoredRect rect3;
-    rect3.x_min = 10;
-    rect3.x_max = 50;
-    rect3.y_min = 50;
-    rect3.y_max = 90;
+    rect3.x_min = 210;
+    rect3.x_max = 250;
+    rect3.y_min = 250;
+    rect3.y_max = 290;
     primitive_group->push_rect(rect3);
 
     f32 last_time = glfwGetTime();

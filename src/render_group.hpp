@@ -3,6 +3,7 @@
 #include <memory>
 #include <variant>
 #include <optional>
+#include <vector>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -38,8 +39,7 @@ enum struct RenderGroupType {
 struct RenderGroup {
     // TODO: this storage should be transient and
     // filled from game state every frame
-    Rect rects[MAX_RECT_COUNT];
-    u32 rect_count = 0;
+    std::vector<Rect> rects = {};
 
     GLuint vao = 0;
     GLuint vbo = 0;
