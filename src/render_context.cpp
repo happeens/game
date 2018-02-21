@@ -1,4 +1,4 @@
-#include <render_info.hpp>
+#include <render_context.hpp>
 
 #include <stdio.h>
 
@@ -7,7 +7,7 @@
 
 #include <resource_manager.hpp>
 
-RenderInfo::RenderInfo(GLFWwindow* window) {
+RenderContext::RenderContext(GLFWwindow* window) {
     this->renderer_string = glGetString(GL_RENDERER);
     this->version_string = glGetString(GL_VERSION);
 
@@ -23,15 +23,15 @@ RenderInfo::RenderInfo(GLFWwindow* window) {
     glViewport(0, 0, this->viewport_width, this->viewport_height);
 }
 
-RenderInfo::~RenderInfo() {}
+RenderContext::~RenderContext() {}
 
-void RenderInfo::draw() const {
+void RenderContext::draw() const {
     for (u32 i = 0; i < this->render_group_count; i++) {
         this->render_groups[i]->draw();
     }
 }
 
-std::shared_ptr<RenderGroup> RenderInfo::create_primitive_render_group() {
+std::shared_ptr<RenderGroup> RenderContext::create_primitive_render_group() {
     glm::mat4 proj = glm::ortho(
         0.0f,
         (f32) this->viewport_width,
@@ -45,7 +45,9 @@ std::shared_ptr<RenderGroup> RenderInfo::create_primitive_render_group() {
     return render_group;
 }
 
-std::shared_ptr<RenderGroup> RenderInfo::create_sprite_render_group() {
+std::shared_ptr<RenderGroup> RenderContext::create_sprite_render_group(
+    const std::string& texture_name
+) {
     glm::mat4 proj = glm::ortho(
         0.0f,
         (f32) this->viewport_width,
@@ -53,8 +55,10 @@ std::shared_ptr<RenderGroup> RenderInfo::create_sprite_render_group() {
         0.0f
     );
 
-    auto texture = ResourceManager::get_instance().get_texture("female0.png");
+    auto texture = ResourceManager::get_instance().get_texture(texture_name);
     texture->bind();
+
+    // TODO: make this configurable
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 

@@ -22,7 +22,7 @@ set(SOURCE_FILES
     src/shader.cpp
     src/texture.cpp
     src/render_group.cpp
-    src/render_info.cpp
+    src/render_context.cpp
     src/resource_manager.cpp
 )
 

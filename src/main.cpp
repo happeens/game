@@ -5,7 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <common.hpp>
-#include <render_info.hpp>
+#include <render_context.hpp>
 
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);
@@ -80,31 +80,10 @@ i32 main(i32 argc, char *argv[]) {
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    auto render_info = new RenderInfo(window);
+    auto render_context = new RenderContext(window);
 
-    auto sprite_group = render_info->create_sprite_render_group();
-    auto primitive_group = render_info->create_primitive_render_group();
-
-    ColoredRect rect1;
-    rect1.x_min = 10;
-    rect1.x_max = 100;
-    rect1.y_min = 10;
-    rect1.y_max = 100;
-    primitive_group->push_rect(rect1);
-
-    ColoredRect rect2;
-    rect2.x_min = 100;
-    rect2.x_max = 150;
-    rect2.y_min = 110;
-    rect2.y_max = 160;
-    primitive_group->push_rect(rect2);
-
-    ColoredRect rect3;
-    rect3.x_min = 210;
-    rect3.x_max = 250;
-    rect3.y_min = 250;
-    rect3.y_max = 290;
-    primitive_group->push_rect(rect3);
+    auto sprite_group = render_context->create_sprite_render_group("female0.png");
+    auto primitive_group = render_context->create_primitive_render_group();
 
     f32 last_time = glfwGetTime();
 
@@ -118,7 +97,7 @@ i32 main(i32 argc, char *argv[]) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        render_info->draw();
+        render_context->draw();
 
         glfwSwapBuffers(window);
     }

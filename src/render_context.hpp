@@ -11,7 +11,7 @@
 
 #define MAX_RENDER_GROUP_COUNT 10
 
-struct RenderInfo {
+struct RenderContext {
     i32 viewport_width = 0;
     i32 viewport_height = 0;
 
@@ -22,12 +22,14 @@ struct RenderInfo {
     u32 render_group_count = 0;
     glm::mat4 projection;
 
-    RenderInfo(GLFWwindow* window);
-    ~RenderInfo();
+    RenderContext(GLFWwindow* window);
+    ~RenderContext();
 
     void draw() const;
 
     std::shared_ptr<RenderGroup> create_primitive_render_group();
-    std::shared_ptr<RenderGroup> create_sprite_render_group();
+    std::shared_ptr<RenderGroup> create_sprite_render_group(
+        const std::string& texture_name
+    );
 };
 
