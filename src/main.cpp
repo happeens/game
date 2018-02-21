@@ -83,7 +83,10 @@ i32 main(i32 argc, char *argv[]) {
     auto render_context = new RenderContext(window);
 
     auto sprite_group = render_context->create_sprite_render_group("female0.png");
-    auto primitive_group = render_context->create_primitive_render_group();
+    auto sprite = TexturedRect(10, 400, 10, 400);
+    auto sprite2 = TexturedRect(10, 400, 410, 800);
+    sprite_group->push_rect(sprite);
+    sprite_group->push_rect(sprite2);
 
     f32 last_time = glfwGetTime();
 

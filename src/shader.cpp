@@ -109,3 +109,11 @@ void Shader::set_uniform(const std::string& name, glm::mat4 value) const {
     );
 }
 
+void Shader::bind_uniform_block(const std::string& name, GLuint ubo) const {
+    glUniformBlockBinding(
+        this->id,
+        glGetUniformBlockIndex(this->id, name.c_str()),
+        0
+    );
+}
+

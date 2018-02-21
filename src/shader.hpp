@@ -20,5 +20,7 @@ struct Shader {
     void set_uniform(const std::string& name, i32 value) const;
     void set_uniform(const std::string& name, f32 value) const;
     void set_uniform(const std::string& name, glm::mat4 value) const;
+
+    void bind_uniform_block(const std::string& name, GLuint ubo) const;
 };
 

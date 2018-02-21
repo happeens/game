@@ -4,10 +4,18 @@ layout (location = 0) in vec2 a_position;
 
 out vec2 tex_position;
 
-uniform mat4 projection;
+layout (std140) uniform Viewport {
+    mat4 projection;
+    uint viewport_width;
+    uint viewport_height;
+};
 
 void main() {
-    gl_Position = projection * vec4(a_position, 0.0, 1.0);
+    gl_Position = projection * vec4(
+        a_position.x,
+        viewport_height - a_position.y,
+        0.0, 1.0
+    );
 
     int rect_corner = gl_VertexID % 4;
 

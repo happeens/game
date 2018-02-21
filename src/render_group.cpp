@@ -4,17 +4,16 @@
 
 #include <resource_manager.hpp>
 
-std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
+std::shared_ptr<RenderGroup> RenderGroup::primitive(Viewport viewport) {
     auto result = std::make_shared<RenderGroup>();
     result->type = RenderGroupType::Primitive;
 
     auto shader = ResourceManager::get_instance().get_shader("primitive");
     shader->use();
-    shader->set_uniform("projection", projection);
+    shader->bind_uniform_block("Viewport", viewport.ubo);
 
     result->texture = std::nullopt;
     result->shader = shader;
-    result->projection = projection;
 
     glGenVertexArrays(1, &result->vao);
     glBindVertexArray(result->vao);
@@ -54,7 +53,7 @@ std::shared_ptr<RenderGroup> RenderGroup::primitive(glm::mat4 projection) {
 }
 
 std::shared_ptr<RenderGroup> RenderGroup::sprite(
-    glm::mat4 projection,
+    Viewport viewport,
     std::shared_ptr<Texture> texture
 ) {
     auto result = std::make_shared<RenderGroup>();
@@ -62,11 +61,10 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
 
     auto shader = ResourceManager::get_instance().get_shader("sprite");
     shader->use();
-    shader->set_uniform("projection", projection);
+    shader->bind_uniform_block("Viewport", viewport.ubo);
 
     result->texture = texture;
     result->shader = shader;
-    result->projection = projection;
 
     glGenVertexArrays(1, &result->vao);
     glBindVertexArray(result->vao);
@@ -246,7 +244,6 @@ static void draw_sprite_group(const RenderGroup* group) {
 
 void RenderGroup::draw() const {
     this->shader->use();
-    this->shader->set_uniform("projection", this->projection);
 
     glBindVertexArray(this->vao);
 
