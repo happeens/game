@@ -24,6 +24,8 @@ struct RenderContext {
 
     void draw() const;
 
+    void update_viewport(i32 width, i32 height);
+
     std::shared_ptr<RenderGroup> create_primitive_render_group();
     std::shared_ptr<RenderGroup> create_sprite_render_group(
         const std::string& texture_name

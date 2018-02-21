@@ -8,6 +8,28 @@
 
 #include <resource_manager.hpp>
 
+static void update_viewport_buffer(Viewport viewport) {
+    glBindBuffer(GL_UNIFORM_BUFFER, viewport.ubo);
+    glBufferSubData(
+        GL_UNIFORM_BUFFER,
+        0, sizeof(glm::mat4),
+        glm::value_ptr(viewport.projection)
+    );
+
+    glBufferSubData(
+        GL_UNIFORM_BUFFER,
+        sizeof(glm::mat4), sizeof(u32),
+        (void*) &viewport.width
+    );
+
+    glBufferSubData(
+        GL_UNIFORM_BUFFER,
+        sizeof(glm::mat4) + sizeof(u32), sizeof(u32),
+        (void*) &viewport.height
+    );
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
 RenderContext::RenderContext(GLFWwindow* window) {
     this->renderer_string = glGetString(GL_RENDERER);
     this->version_string = glGetString(GL_VERSION);
@@ -45,25 +67,6 @@ RenderContext::RenderContext(GLFWwindow* window) {
         GL_STATIC_DRAW
     );
 
-    glBufferSubData(
-        GL_UNIFORM_BUFFER,
-        0, sizeof(glm::mat4),
-        glm::value_ptr(viewport.projection)
-    );
-
-    glBufferSubData(
-        GL_UNIFORM_BUFFER,
-        sizeof(glm::mat4), sizeof(u32),
-        (void*) &viewport.width
-    );
-
-    glBufferSubData(
-        GL_UNIFORM_BUFFER,
-        sizeof(glm::mat4) + sizeof(u32), sizeof(u32),
-        (void*) &viewport.height
-    );
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
     // NOTE: right now, we only use the buffer index for
     // a single object, so its always bound to 0. There should
     // be global indices if more are being used.
@@ -72,6 +75,9 @@ RenderContext::RenderContext(GLFWwindow* window) {
         viewport.ubo,
         0, sizeof(glm::mat4)
     );
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+    update_viewport_buffer(viewport);
 
     this->viewport = viewport;
 
@@ -83,6 +89,19 @@ RenderContext::~RenderContext() {}
 void RenderContext::draw() const {
     for (auto it : this->render_groups)
         it->draw();
+}
+
+void RenderContext::update_viewport(i32 width, i32 height) {
+    this->viewport.width = (u32) width;
+    this->viewport.height = (u32) height;
+    this->viewport.projection = glm::ortho(
+        0.0f,
+        (f32) width,
+        (f32) height,
+        0.0f
+    );
+
+    update_viewport_buffer(this->viewport);
 }
 
 std::shared_ptr<RenderGroup> RenderContext::create_primitive_render_group() {

@@ -7,6 +7,10 @@
 #include <common.hpp>
 #include <render_context.hpp>
 
+static RenderContext* get_render_context(GLFWwindow* window) {
+    return static_cast<RenderContext*>(glfwGetWindowUserPointer(window));
+}
+
 static void error_callback(i32 error, const char* description) {
     printf("an error has occured: %s\n", description);
 }
@@ -20,7 +24,7 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 void framebuffer_size_callback(GLFWwindow* window, i32 width, i32 height) {
-    printf("resized to %d, %d!\n", width, height);
+    get_render_context(window)->update_viewport(width, height);
     glViewport(0, 0, width, height);
 }
 
@@ -81,6 +85,7 @@ i32 main(i32 argc, char *argv[]) {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     auto render_context = new RenderContext(window);
+    glfwSetWindowUserPointer(window, (void*) render_context);
 
     auto sprite_group = render_context->create_sprite_render_group("female0.png");
     auto sprite = TexturedRect(10, 400, 10, 400);
@@ -105,6 +110,7 @@ i32 main(i32 argc, char *argv[]) {
         glfwSwapBuffers(window);
     }
 
+    delete (render_context);
     glfwTerminate();
     return 0;
 }

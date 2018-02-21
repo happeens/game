@@ -14,7 +14,7 @@ layout (std140) uniform Viewport {
 void main() {
     gl_Position = projection * vec4(
         a_position.x
-        a_position.y,
+        viewport_height - a_position.y,
         0.0, 1.0
     );
 
