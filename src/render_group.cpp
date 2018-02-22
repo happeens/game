@@ -117,36 +117,36 @@ static void draw_primitive_group(const RenderGroup* group) {
         auto vert_index = i * 20;
 
         // top left
-        vertices[vert_index] = (f32) rect.x_min;
-        vertices[vert_index + 1] = (f32) rect.y_min;
+        vertices[vert_index] = (f32) rect.pos.x;
+        vertices[vert_index + 1] = (f32) rect.pos.y;
 
-        vertices[vert_index + 2] = 1.0;
-        vertices[vert_index + 3] = 1.0;
-        vertices[vert_index + 4] = 0.0;
+        vertices[vert_index + 2] = rect.color.r;
+        vertices[vert_index + 3] = rect.color.g;
+        vertices[vert_index + 4] = rect.color.b;
 
         // top right
-        vertices[vert_index + 5] = (f32) rect.x_max;
-        vertices[vert_index + 6] = (f32) rect.y_min;
+        vertices[vert_index + 5] = (f32) rect.pos.x + rect.size.width;
+        vertices[vert_index + 6] = (f32) rect.pos.y;
 
-        vertices[vert_index + 7] = 0.0;
-        vertices[vert_index + 8] = 1.0;
-        vertices[vert_index + 9] = 1.0;
+        vertices[vert_index + 7] = rect.color.r;
+        vertices[vert_index + 8] = rect.color.g;
+        vertices[vert_index + 9] = rect.color.b;
 
         // bottom left
-        vertices[vert_index + 10] = (f32) rect.x_min;
-        vertices[vert_index + 11] = (f32) rect.y_max;
+        vertices[vert_index + 10] = (f32) rect.pos.x;
+        vertices[vert_index + 11] = (f32) rect.pos.y + rect.size.height;
 
-        vertices[vert_index + 12] = 1.0;
-        vertices[vert_index + 13] = 0.0;
-        vertices[vert_index + 14] = 1.0;
+        vertices[vert_index + 12] = rect.color.r;
+        vertices[vert_index + 13] = rect.color.g;
+        vertices[vert_index + 14] = rect.color.b;
 
         // bottom right
-        vertices[vert_index + 15] = (f32) rect.x_max;
-        vertices[vert_index + 16] = (f32) rect.y_max;
+        vertices[vert_index + 15] = (f32) rect.pos.x + rect.size.width;
+        vertices[vert_index + 16] = (f32) rect.pos.y + rect.size.height;
 
-        vertices[vert_index + 17] = 0.0;
-        vertices[vert_index + 18] = 0.0;
-        vertices[vert_index + 19] = 1.0;
+        vertices[vert_index + 17] = rect.color.r;
+        vertices[vert_index + 18] = rect.color.g;
+        vertices[vert_index + 19] = rect.color.b;
 
         auto elem_index = i * 6;
         auto elem = i * 4;
@@ -195,20 +195,20 @@ static void draw_sprite_group(const RenderGroup* group) {
         auto vert_index = i * 8;
 
         // top left
-        vertices[vert_index] = (f32) rect.x_min;
-        vertices[vert_index + 1] = (f32) rect.y_min;
+        vertices[vert_index] = (f32) rect.pos.x;
+        vertices[vert_index + 1] = (f32) rect.pos.y;
 
         // top right
-        vertices[vert_index + 2] = (f32) rect.x_max;
-        vertices[vert_index + 3] = (f32) rect.y_min;
+        vertices[vert_index + 2] = (f32) rect.pos.x + rect.size.width;
+        vertices[vert_index + 3] = (f32) rect.pos.y;
 
         // bottom left
-        vertices[vert_index + 4] = (f32) rect.x_min;
-        vertices[vert_index + 5] = (f32) rect.y_max;
+        vertices[vert_index + 4] = (f32) rect.pos.x;
+        vertices[vert_index + 5] = (f32) rect.pos.y + rect.size.height;
 
         // bottom right
-        vertices[vert_index + 6] = (f32) rect.x_max;
-        vertices[vert_index + 7] = (f32) rect.y_max;
+        vertices[vert_index + 6] = (f32) rect.pos.x + rect.size.width;
+        vertices[vert_index + 7] = (f32) rect.pos.y + rect.size.height;
 
         auto elem_index = i * 6;
         auto elem = i * 4;

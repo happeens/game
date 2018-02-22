@@ -24,23 +24,21 @@ struct Viewport {
 };
 
 struct ColoredRect {
-    f32 x_min;
-    f32 x_max;
-    f32 y_min;
-    f32 y_max;
+    Position pos;
+    Size size;
+    Color color;
 
-    ColoredRect(f32 x_min, f32 x_max, f32 y_min, f32 y_max) : 
-        x_min(x_min), x_max(x_max), y_min(y_min), y_max(y_max) {};
+    ColoredRect(Position pos, Size size, Color color) :
+        pos(pos), size(size), color(color) {};
 };
 
 struct TexturedRect {
-    f32 x_min;
-    f32 x_max;
-    f32 y_min;
-    f32 y_max;
+    Position pos;
+    Size size;
+    SpriteId active_sprite;
 
-    TexturedRect(f32 x_min, f32 x_max, f32 y_min, f32 y_max) : 
-        x_min(x_min), x_max(x_max), y_min(y_min), y_max(y_max) {};
+    TexturedRect(Position pos, Size size, SpriteId active_sprite) :
+        pos(pos), size(size), active_sprite(active_sprite) {};
 };
 
 using Rect = std::variant<ColoredRect, TexturedRect>;

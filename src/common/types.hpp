@@ -13,3 +13,30 @@ typedef uint64_t u64;
 typedef float f32;
 typedef double f64;
 
+struct Color {
+    f32 r;
+    f32 g;
+    f32 b;
+    f32 a;
+
+    Color(f32 r, f32 g, f32 b, f32 a) :
+        r(r), g(g), b(b), a(a) {};
+};
+
+struct Position {
+    f32 x;
+    f32 y;
+
+    Position(f32 x, f32 y) : x(x), y(y) {};
+};
+
+struct Size {
+    f32 width;
+    f32 height;
+
+    Size(f32 width, f32 height) :
+        width(width), height(height) {};
+};
+
+typedef u16 SpriteId;
+

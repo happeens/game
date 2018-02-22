@@ -90,8 +90,8 @@ i32 main(i32 argc, char *argv[]) {
     glfwSetWindowUserPointer(window, (void*) render_context);
 
     auto sprite_group = render_context->create_sprite_render_group("female0.png");
-    auto sprite = TexturedRect(10, 400, 10, 400);
-    auto sprite2 = TexturedRect(10, 400, 410, 800);
+    auto sprite = TexturedRect(Position(10.0f, 10.0f), Size(300.0f, 300.0f), 0);
+    auto sprite2 = TexturedRect(Position(150.0f, 200.0f), Size(300.0f, 300.0f), 0);
     sprite_group->push_rect(sprite);
     sprite_group->push_rect(sprite2);
 
