@@ -66,6 +66,8 @@ i32 main(i32 argc, char *argv[]) {
     glfwWindowHint(GLFW_GREEN_BITS, 4);
     glfwWindowHint(GLFW_ALPHA_BITS, 4);
 
+    glfwWindowHint(GLFW_DECORATED, false);
+
     GLFWwindow* window = glfwCreateWindow(1280, 720, "game", NULL, NULL);
     if (!window) {
         printf("window creation failed\n");
