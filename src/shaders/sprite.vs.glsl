@@ -1,6 +1,8 @@
 #version 330 core
 
 layout (location = 0) in vec2 a_position;
+layout (location = 1) in vec2 tex_size;
+layout (location = 2) in vec2 tex_offset;
 
 out vec2 tex_position;
 
@@ -28,5 +30,7 @@ void main() {
     } else {
         tex_position = vec2(1.0, 0.0);
     }
+
+    tex_position = tex_size * tex_position + tex_offset;
 }
 

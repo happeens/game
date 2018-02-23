@@ -90,7 +90,19 @@ std::shared_ptr<RenderGroup> RenderGroup::sprite(
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(
         0, 2, GL_FLOAT, GL_FALSE,
-        2 * sizeof(GLfloat), (void*) 0
+        6 * sizeof(GLfloat), (void*) 0
+    );
+
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(
+        1, 2, GL_FLOAT, GL_FALSE,
+        6 * sizeof(GLfloat), (void*) (2 * sizeof(GLfloat))
+    );
+
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(
+        2, 2, GL_FLOAT, GL_FALSE,
+        6 * sizeof(GLfloat), (void*) (4 * sizeof(GLfloat))
     );
 
     glBindVertexArray(0);
@@ -183,32 +195,64 @@ static void draw_primitive_group(const RenderGroup* group) {
 static void draw_sprite_group(const RenderGroup* group) {
     // TODO: keep this in a buffer to avoid reallocation every frame?
     std::vector<f32> vertices = {};
-    vertices.reserve(group->rects.size() * 8);
+    vertices.reserve(group->rects.size() * 24);
 
     std::vector<GLuint> elements = {};
     elements.reserve(group->rects.size() * 6);
 
-    (*group->texture)->bind();
+    auto texture = *group->texture;
+    texture->bind();
 
     for (u32 i = 0; i < group->rects.size(); i++) {
         auto rect = std::get<TexturedRect>(group->rects[i]);
-        auto vert_index = i * 8;
+        auto vert_index = i * 24;
+        auto sprite_data = texture->sprites[rect.active_sprite];
+
+        auto tex_size_x = sprite_data.tex_size.width / (f32) texture->width;
+        auto tex_size_y = sprite_data.tex_size.height / (f32) texture->height;
+
+        auto tex_offset_x = sprite_data.tex_pos.x / (f32) texture->width;
+        auto tex_offset_y = sprite_data.tex_pos.y / (f32) texture->height;
 
         // top left
-        vertices[vert_index] = (f32) rect.pos.x;
-        vertices[vert_index + 1] = (f32) rect.pos.y;
+        vertices[vert_index] = rect.pos.x;
+        vertices[vert_index + 1] = rect.pos.y;
+
+        vertices[vert_index + 2] = tex_size_x;
+        vertices[vert_index + 3] = tex_size_y;
+
+        vertices[vert_index + 4] = tex_offset_x;
+        vertices[vert_index + 5] = tex_offset_y;
 
         // top right
-        vertices[vert_index + 2] = (f32) rect.pos.x + rect.size.width;
-        vertices[vert_index + 3] = (f32) rect.pos.y;
+        vertices[vert_index + 6] = rect.pos.x + rect.size.width;
+        vertices[vert_index + 7] = rect.pos.y;
+
+        vertices[vert_index + 8] = tex_size_x;
+        vertices[vert_index + 9] = tex_size_y;
+
+        vertices[vert_index + 10] = tex_offset_x;
+        vertices[vert_index + 11] = tex_offset_y;
 
         // bottom left
-        vertices[vert_index + 4] = (f32) rect.pos.x;
-        vertices[vert_index + 5] = (f32) rect.pos.y + rect.size.height;
+        vertices[vert_index + 12] = rect.pos.x;
+        vertices[vert_index + 13] = rect.pos.y + rect.size.height;
+
+        vertices[vert_index + 14] = tex_size_x;
+        vertices[vert_index + 15] = tex_size_y;
+
+        vertices[vert_index + 16] = tex_offset_x;
+        vertices[vert_index + 17] = tex_offset_y;
 
         // bottom right
-        vertices[vert_index + 6] = (f32) rect.pos.x + rect.size.width;
-        vertices[vert_index + 7] = (f32) rect.pos.y + rect.size.height;
+        vertices[vert_index + 18] = rect.pos.x + rect.size.width;
+        vertices[vert_index + 19] = rect.pos.y + rect.size.height;
+
+        vertices[vert_index + 20] = tex_size_x;
+        vertices[vert_index + 21] = tex_size_y;
+
+        vertices[vert_index + 22] = tex_offset_x;
+        vertices[vert_index + 23] = tex_offset_y;
 
         auto elem_index = i * 6;
         auto elem = i * 4;
@@ -223,7 +267,7 @@ static void draw_sprite_group(const RenderGroup* group) {
     glBindBuffer(GL_ARRAY_BUFFER, group->vbo);
     glBufferSubData(
         GL_ARRAY_BUFFER,
-        0, group->rects.size() * 8 * sizeof(GLfloat),
+        0, group->rects.size() * 24 * sizeof(GLfloat),
         vertices.data()
     );
 

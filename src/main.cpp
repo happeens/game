@@ -84,16 +84,22 @@ i32 main(i32 argc, char *argv[]) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     auto render_context = new RenderContext(window);
     glfwSetWindowUserPointer(window, (void*) render_context);
 
     auto sprite_group = render_context->create_sprite_render_group("female0.png");
-    auto sprite = TexturedRect(Position(10.0f, 10.0f), Size(300.0f, 300.0f), 0);
-    auto sprite2 = TexturedRect(Position(150.0f, 200.0f), Size(300.0f, 300.0f), 0);
+    auto sprite = TexturedRect(Position(10.0f, 10.0f), Size(200.0f, 200.0f), 0);
+    auto sprite2 = TexturedRect(Position(210.0f, 10.0f), Size(200.0f, 200.0f), 1);
+    auto sprite3 = TexturedRect(Position(420.0f, 10.0f), Size(200.0f, 200.0f), 2);
+
     sprite_group->push_rect(sprite);
     sprite_group->push_rect(sprite2);
+    sprite_group->push_rect(sprite3);
 
     f32 last_time = glfwGetTime();
 
