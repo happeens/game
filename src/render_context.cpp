@@ -124,3 +124,21 @@ std::shared_ptr<RenderGroup> RenderContext::create_sprite_render_group(
     this->render_groups.push_back(render_group);
     return render_group;
 }
+
+std::shared_ptr<RenderGroup> RenderContext::create_sprite_batch_render_group(
+    const std::string& texture_name,
+    const BatchInput& sprites
+) {
+    auto texture = ResourceManager::get_instance().make_batch_texture(
+        texture_name, sprites
+    );
+    texture->bind();
+
+    // TODO: make this configurable
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    auto render_group = RenderGroup::sprite(this->viewport, texture);
+    this->render_groups.push_back(render_group);
+    return render_group;
+}

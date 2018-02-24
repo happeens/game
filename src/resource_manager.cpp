@@ -32,3 +32,21 @@ std::shared_ptr<Texture> ResourceManager::get_texture(const std::string& name) {
     return texture;
 }
 
+std::shared_ptr<Texture> ResourceManager::make_batch_texture(
+    const std::string& name,
+    const BatchInput& sprites
+) {
+    std::vector<std::string> batch = {};
+
+    std::ostringstream path_buf;
+    for (auto it : sprites.values) {
+        path_buf << "../assets/" << it;
+        batch.push_back(path_buf.str());
+        path_buf.str("");
+    }
+
+    auto texture = std::make_shared<Texture>(batch);
+    this->textures[name] = texture;
+    return texture;
+}
+

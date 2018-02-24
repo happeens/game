@@ -30,5 +30,9 @@ struct RenderContext {
     std::shared_ptr<RenderGroup> create_sprite_render_group(
         const std::string& texture_name
     );
+    std::shared_ptr<RenderGroup> create_sprite_batch_render_group(
+        const std::string& texture_name,
+        const BatchInput& sprites
+    );
 };
 

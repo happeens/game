@@ -6,9 +6,14 @@
 
 #include <common.hpp>
 #include <render_context.hpp>
+#include <texture.hpp>
 
-static RenderContext* get_render_context(GLFWwindow* window) {
-    return static_cast<RenderContext*>(glfwGetWindowUserPointer(window));
+struct Context {
+    RenderContext* render_context;
+};
+
+static Context* get_context(GLFWwindow* window) {
+    return static_cast<Context*>(glfwGetWindowUserPointer(window));
 }
 
 static void error_callback(i32 error, const char* description) {
@@ -24,7 +29,8 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 }
 
 void framebuffer_size_callback(GLFWwindow* window, i32 width, i32 height) {
-    get_render_context(window)->update_viewport(width, height);
+    auto context = get_context(window);
+    context->render_context->update_viewport(width, height);
     glViewport(0, 0, width, height);
 }
 
@@ -89,17 +95,23 @@ i32 main(i32 argc, char *argv[]) {
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    auto context = new Context;
     auto render_context = new RenderContext(window);
-    glfwSetWindowUserPointer(window, (void*) render_context);
+    context->render_context = render_context;
 
-    auto sprite_group = render_context->create_sprite_render_group("female0.png");
+    glfwSetWindowUserPointer(window, (void*) context);
+
+    auto batch_group = render_context->create_sprite_batch_render_group(
+        "test-batch",
+        BatchInput{
+            "sprite0.png",
+            "sprite1.png",
+            "sprite2.png"
+        }
+    );
+
     auto sprite = TexturedRect(Position(10.0f, 10.0f), Size(200.0f, 200.0f), 0);
-    auto sprite2 = TexturedRect(Position(210.0f, 10.0f), Size(200.0f, 200.0f), 1);
-    auto sprite3 = TexturedRect(Position(420.0f, 10.0f), Size(200.0f, 200.0f), 2);
-
-    sprite_group->push_rect(sprite);
-    sprite_group->push_rect(sprite2);
-    sprite_group->push_rect(sprite3);
+    batch_group->push_rect(sprite);
 
     f32 last_time = glfwGetTime();
 

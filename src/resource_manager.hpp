@@ -20,6 +20,10 @@ public:
 
     std::shared_ptr<Shader> get_shader(const std::string& name);
     std::shared_ptr<Texture> get_texture(const std::string& name);
+    std::shared_ptr<Texture> make_batch_texture(
+        const std::string& name,
+        const BatchInput& sprites
+    );
 
 private:
     ResourceManager() {}

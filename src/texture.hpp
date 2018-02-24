@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <initializer_list>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -17,6 +18,13 @@ struct SpriteData {
         tex_pos(tex_pos), tex_size(tex_size) {};
 };
 
+struct BatchInput {
+    BatchInput(const std::initializer_list<std::string>& input) :
+        values(input) {};
+
+    const std::vector<std::string> values;
+};
+
 struct Texture {
     GLuint id;
 
@@ -28,6 +36,7 @@ struct Texture {
     std::vector<SpriteData> sprites = {};
 
     Texture(const std::string& path);
+    Texture(const std::vector<std::string>& batch);
     ~Texture();
 
     void bind() const;
