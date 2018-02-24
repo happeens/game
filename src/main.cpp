@@ -110,8 +110,12 @@ i32 main(i32 argc, char *argv[]) {
         }
     );
 
-    auto sprite = TexturedRect(Position(10.0f, 10.0f), Size(200.0f, 200.0f), 0);
-    batch_group->push_rect(sprite);
+    auto sprite0 = TexturedRect(Position(10.0f, 10.0f), Size(200.0f, 200.0f), 0);
+    auto sprite1 = TexturedRect(Position(10.0f, 210.0f), Size(200.0f, 200.0f), 1);
+    auto sprite2 = TexturedRect(Position(10.0f, 420.0f), Size(200.0f, 200.0f), 2);
+    batch_group->push_rect(sprite0);
+    batch_group->push_rect(sprite1);
+    batch_group->push_rect(sprite2);
 
     f32 last_time = glfwGetTime();
 

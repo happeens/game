@@ -170,6 +170,11 @@ Texture::Texture(const std::vector<std::string>& batch) {
         auto anchor = abs_anchors[i];
         auto anchor_offset = (anchor.y * this->width * 4) + anchor.x * 4;
 
+        this->sprites.push_back(SpriteData(
+            Position((f32) anchor.x, (f32) anchor.y),
+            Size((f32) sprite.width, (f32) sprite.height)
+        ));
+
         for (u32 y = 0; y < sprite.height; ++y) {
             auto sprite_height_offset = y * sprite.width * 4;
             auto batch_height_offset = y * this->width * 4;
@@ -179,6 +184,8 @@ Texture::Texture(const std::vector<std::string>& batch) {
                     sprite.data[sprite_height_offset + x];
             }
         }
+
+        stbi_image_free(sprite.data);
     }
 
     glGenTextures(1, &this->id);
@@ -188,16 +195,6 @@ Texture::Texture(const std::vector<std::string>& batch) {
         this->width, this->height, 0, GL_RGBA,
         GL_UNSIGNED_BYTE, result.data()
     );
-
-    for (auto sprite : sprites)
-        stbi_image_free(sprite.data);
-
-    auto sprite = SpriteData(
-        Position(0.0f, 0.0f),
-        Size((f32) this->width, (f32) this->height)
-    );
-
-    this->sprites.push_back(sprite);
 
     glBindTexture(GL_TEXTURE_2D, 0);
 }
