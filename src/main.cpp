@@ -8,6 +8,8 @@
 #include <render_context.hpp>
 #include <texture.hpp>
 
+#include <text.hpp>
+
 struct Context {
     RenderContext* render_context;
 };
@@ -21,7 +23,7 @@ static void error_callback(i32 error, const char* description) {
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    printf("key pressed: %d", key);
+    printf("key pressed: %d\n", key);
 
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GLFW_TRUE);
@@ -111,11 +113,18 @@ i32 main(i32 argc, char *argv[]) {
     );
 
     auto sprite0 = TexturedRect(Position(10.0f, 10.0f), Size(200.0f, 200.0f), 0);
-    auto sprite1 = TexturedRect(Position(10.0f, 210.0f), Size(200.0f, 200.0f), 1);
-    auto sprite2 = TexturedRect(Position(10.0f, 420.0f), Size(200.0f, 200.0f), 2);
+    auto sprite1 = TexturedRect(Position(200.0f, 10.0f), Size(200.0f, 200.0f), 1);
+    auto sprite2 = TexturedRect(Position(400.0f, 10.0f), Size(200.0f, 200.0f), 2);
     batch_group->push_rect(sprite0);
     batch_group->push_rect(sprite1);
     batch_group->push_rect(sprite2);
+
+    auto font_group = render_context->create_text_render_group();
+    auto character = ColoredRect(
+        Position(10.0f, 400.0f), Size(200.0f, 200.0f),
+        Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+    font_group->push_rect(character);
 
     f32 last_time = glfwGetTime();
 

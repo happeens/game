@@ -34,5 +34,6 @@ struct RenderContext {
         const std::string& texture_name,
         const BatchInput& sprites
     );
+    std::shared_ptr<RenderGroup> create_text_render_group();
 };
 

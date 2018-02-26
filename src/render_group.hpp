@@ -12,6 +12,7 @@
 #include <common.hpp>
 #include <shader.hpp>
 #include <texture.hpp>
+#include <text.hpp>
 
 #define MAX_RECT_COUNT 1024
 
@@ -45,7 +46,8 @@ using Rect = std::variant<ColoredRect, TexturedRect>;
 
 enum struct RenderGroupType {
     Primitive = 0,
-    Sprite
+    Sprite,
+    Text,
 };
 
 struct RenderGroup {
@@ -61,6 +63,7 @@ struct RenderGroup {
 
     std::shared_ptr<Shader> shader;
     std::optional<std::shared_ptr<Texture>> texture;
+    std::optional<std::shared_ptr<FontTexture>> font_texture;
 
     RenderGroup();
     ~RenderGroup();
@@ -71,6 +74,10 @@ struct RenderGroup {
     static std::shared_ptr<RenderGroup> sprite(
         Viewport viewport,
         std::shared_ptr<Texture> texture
+    );
+    static std::shared_ptr<RenderGroup> text(
+        Viewport viewport,
+        std::shared_ptr<FontTexture> font_texture
     );
 
     void draw() const;

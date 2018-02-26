@@ -25,6 +25,7 @@ Texture::Texture(const std::string& path) {
     this->height = (u32) height;
     this->channels = (u32) channels;
 
+    //TODO: make this actually load sprite data
     for (u32 i = 0; i < 3; i++) {
         auto sprite = SpriteData(
             Position(i * 30.0f, 0.0f),
@@ -101,7 +102,6 @@ Texture::Texture(const std::vector<std::string>& batch) {
         sprite.channels = (u32) channels;
 
         sprites.push_back(sprite);
-        printf("found sprite %d/%d\n", width, height);
     }
 
     std::sort(sprites.begin(), sprites.end(), compare_area);

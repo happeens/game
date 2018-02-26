@@ -142,3 +142,16 @@ std::shared_ptr<RenderGroup> RenderContext::create_sprite_batch_render_group(
     this->render_groups.push_back(render_group);
     return render_group;
 }
+
+std::shared_ptr<RenderGroup> RenderContext::create_text_render_group() {
+    auto font_texture = std::make_shared<FontTexture>();
+    font_texture->bind();
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    auto render_group = RenderGroup::text(this->viewport, font_texture);
+    this->render_groups.push_back(render_group);
+    return render_group;
+}
+
