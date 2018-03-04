@@ -86,7 +86,6 @@ FontTexture::FontTexture() {
     auto bitmap = new unsigned char[result_width * result_height] {0};
 
     for (auto& it : this->characters) {
-        printf("printing %c\n", it.first);
         auto offset = it.second.pos_x + (result_height * it.second.pos_y);
 
         stbtt_MakeCodepointBitmap(

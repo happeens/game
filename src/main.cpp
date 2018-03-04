@@ -120,11 +120,27 @@ i32 main(i32 argc, char *argv[]) {
     batch_group->push_rect(sprite2);
 
     auto font_group = render_context->create_text_render_group();
-    auto character = ColoredRect(
-        Position(10.0f, 400.0f), Size(800.0f, 200.0f),
-        Color(1.0f, 1.0f, 1.0f, 1.0f)
+    auto c_a = CharacterRect(
+        Position(10.0f, 400.0f), 3.0f,
+        'a', Color(1.0f, 1.0f, 1.0f, 1.0f)
     );
-    font_group->push_rect(character);
+    auto c_b = CharacterRect(
+        Position(110.0f, 400.0f), 3.0f,
+        'b', Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+    auto c_c = CharacterRect(
+        Position(220.0f, 400.0f), 3.0f,
+        'c', Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+    auto c_d = CharacterRect(
+        Position(330.0f, 400.0f), 3.0f,
+        'd', Color(1.0f, 1.0f, 1.0f, 1.0f)
+    );
+
+    font_group->push_rect(c_a);
+    font_group->push_rect(c_b);
+    font_group->push_rect(c_c);
+    font_group->push_rect(c_d);
 
     f32 last_time = glfwGetTime();
 

@@ -42,7 +42,17 @@ struct TexturedRect {
         pos(pos), size(size), active_sprite(active_sprite) {};
 };
 
-using Rect = std::variant<ColoredRect, TexturedRect>;
+struct CharacterRect {
+    Position pos;
+    f32 scale;
+    char character;
+    Color color;
+
+    CharacterRect(Position pos, f32 scale, char character, Color color) :
+        pos(pos), scale(scale), character(character), color(color) {};
+};
+
+using Rect = std::variant<ColoredRect, TexturedRect, CharacterRect>;
 
 enum struct RenderGroupType {
     Primitive = 0,
@@ -84,5 +94,6 @@ struct RenderGroup {
 
     void push_rect(ColoredRect rect);
     void push_rect(TexturedRect rect);
+    void push_rect(CharacterRect rect);
 };
 

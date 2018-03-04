@@ -202,6 +202,7 @@ Texture::Texture(const std::vector<std::string>& batch) {
 }
 
 Texture::~Texture() {
+    // TODO: more thorough cleanup
     glDeleteTextures(1, &this->id);
 }
 
