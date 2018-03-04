@@ -121,7 +121,7 @@ i32 main(i32 argc, char *argv[]) {
 
     auto font_group = render_context->create_text_render_group();
     auto character = ColoredRect(
-        Position(10.0f, 400.0f), Size(200.0f, 200.0f),
+        Position(10.0f, 400.0f), Size(800.0f, 200.0f),
         Color(1.0f, 1.0f, 1.0f, 1.0f)
     );
     font_group->push_rect(character);

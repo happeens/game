@@ -188,6 +188,8 @@ Texture::Texture(const std::vector<std::string>& batch) {
         stbi_image_free(sprite.data);
     }
 
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+
     glGenTextures(1, &this->id);
     glBindTexture(GL_TEXTURE_2D, this->id);
     glTexImage2D(

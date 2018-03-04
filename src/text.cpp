@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <fstream>
 #include <iterator>
+#include <algorithm>
 
 #define STB_TRUETYPE_IMPLEMENTATION
 #include <stb/stb_truetype.h>
@@ -49,29 +50,56 @@ FontTexture::FontTexture() {
     ascent *= scale;
     descent *= scale;
 
-    // get bounding box
-    i32 x1, y1, x2, y2;
-    stbtt_GetCodepointBitmapBox(
-        &font_info, 'A', scale, scale,
-        &x1, &y1, &x2, &y2
-    );
+    u32 x_offset = 0;
+    i32 max_y = 0;
 
-    i32 width = x2 - x1;
-    i32 height = y2 - y1;
+    for (u32 c = 'a'; c <= 'z'; c++) {
+        CharacterData character = {};
+        character.pos_x = x_offset;
+        // TODO: render character at correct height
+        character.pos_y = 0;
 
-    auto y = ascent + y1;
-    auto offset = y * 50;
+        // get bounding box
+        i32 x1, y1, x2, y2;
+        stbtt_GetCodepointBitmapBox(
+            &font_info, c, scale, scale,
+            &x1, &y1, &x2, &y2
+        );
 
-    ASSERT(width < 50);
-    ASSERT(height < 50);
+        i32 width = x2 - x1;
+        i32 height = y2 - y1;
 
-    /* auto bitmap = new unsigned char[50 * 50] {0}; */
-    unsigned char bitmap[50 * 50] = {0};
+        ASSERT(width > 0);
+        ASSERT(height > 0);
 
-    stbtt_MakeCodepointBitmap(
-        &font_info, bitmap, 50, 50,
-        50, scale, scale, 'A'
-    );
+        character.width = (u32) width;
+        character.height = (u32) height;
+
+        max_y = std::max(max_y, height);
+        x_offset += width;
+
+        this->characters[c] = character;
+    }
+
+    auto result_width = x_offset;
+    auto result_height = max_y;
+    auto bitmap = new unsigned char[result_width * result_height] {0};
+
+    for (auto& it : this->characters) {
+        printf("printing %c\n", it.first);
+        auto offset = it.second.pos_x + (result_height * it.second.pos_y);
+
+        stbtt_MakeCodepointBitmap(
+            &font_info, bitmap + offset, it.second.width, it.second.height,
+            result_width, scale, scale, it.first
+        );
+    }
+
+    ASSERT(result_width > 0);
+    ASSERT(result_height > 0);
+
+    this->width = (u32) result_width;
+    this->height = (u32) result_height;
 
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
@@ -79,12 +107,12 @@ FontTexture::FontTexture() {
     glBindTexture(GL_TEXTURE_2D, this->id);
     glTexImage2D(
         GL_TEXTURE_2D, 0, GL_RGBA,
-        50, 50, 0, GL_LUMINANCE,
-        GL_UNSIGNED_BYTE, &bitmap
+        this->width, this->height, 0, GL_LUMINANCE,
+        GL_UNSIGNED_BYTE, bitmap
     );
 
+    delete bitmap;
     glBindTexture(GL_TEXTURE_2D, 0);
-    /* delete bitmap; */
 }
 
 FontTexture::~FontTexture() {}
